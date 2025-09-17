@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:16.4
+    container_name: pic_cursach_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pic_cursach
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - pic-network
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4:8.6
+    container_name: pic_cursach_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - pic-network
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  postgres_data: {}
+  pgadmin_data: {}
+
+networks:
+  pic-network:
+    driver: bridge
