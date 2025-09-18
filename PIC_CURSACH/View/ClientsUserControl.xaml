@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:PIC_CURSACH.View"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:utils="clr-namespace:PIC_CURSACH.utils"
              Background="{DynamicResource ApplicationBackgroundBrush}"
              mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="600">
@@ -15,7 +16,7 @@
 
             <DataGrid ItemsSource="{Binding Clients}" AutoGenerateColumns="False"
                       SelectedItem="{Binding SelectedClient}"
-                      CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="False">
+                      CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding ClientId}" IsReadOnly="True" Width="60" />
                     <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="*" />
@@ -27,9 +28,14 @@
             </DataGrid>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                <ui:Button Content="Добавить" Command="{Binding AddClientCommand}" Margin="5" Width="100" />
-                <ui:Button Content="Редактировать" Command="{Binding EditClientCommand}" Margin="5" Width="150" />
-                <ui:Button Content="Удалить" Command="{Binding DeleteClientCommand}" Margin="5" Width="100" />
+                <ui:Button Content="Добавить" Command="{Binding ShowAddFormCommand}"
+                           Appearance="Primary" Margin="5" Width="100" />
+                <ui:Button Content="Редактировать" Command="{Binding ShowEditFormCommand}"
+                           IsEnabled="{Binding SelectedClient, Converter={x:Static utils:NullToBoolConverter.Instance}}"
+                           Margin="5" Width="150" />
+                <ui:Button Content="Удалить" Command="{Binding DeleteClientCommand}"
+                           IsEnabled="{Binding SelectedClient, Converter={x:Static utils:NullToBoolConverter.Instance}}"
+                           Appearance="Danger" Margin="5" Width="100" />
             </StackPanel>
         </StackPanel>
     </Grid>
