@@ -90,40 +90,6 @@ CREATE TABLE documents (
 );
 
 -- ==========================================
--- МИНИМАЛЬНЫЕ РОЛИ (4 штуки)
--- ==========================================
-
-CREATE ROLE admin_role;
-CREATE ROLE manager_role;  
-CREATE ROLE operator_role;
-CREATE ROLE viewer_role;
-
--- ==========================================
--- МИНИМАЛЬНЫЕ ПОЛЬЗОВАТЕЛИ (7 штук)
--- ==========================================
-
-INSERT INTO user_roles (role_name) VALUES 
-('admin'), ('manager'), ('operator'), ('viewer');
-
-INSERT INTO employees (first_name, last_name, position) VALUES
-('Иван', 'Иванов', 'Администратор'),
-('Петр', 'Петров', 'Менеджер'),
-('Сидор', 'Сидоров', 'Операционист'),
-('Анна', 'Козлова', 'Менеджер'),
-('Мария', 'Попова', 'Операционист'),
-('Елена', 'Волкова', 'Консультант'),
-('Олег', 'Смирнов', 'Операционист');
-
-INSERT INTO users (employee_id, role_id, username, password_hash) VALUES
-(1, 1, 'admin', 'hash1'),
-(2, 2, 'manager1', 'hash2'),
-(3, 3, 'operator1', 'hash3'),
-(4, 2, 'manager2', 'hash4'),
-(5, 3, 'operator2', 'hash5'),
-(6, 4, 'viewer1', 'hash6'),
-(7, 3, 'operator3', 'hash7');
-
--- ==========================================
 -- МИНИМАЛЬНЫЕ ПРОЦЕДУРЫ (5 штук)
 -- ==========================================
 
@@ -253,3 +219,77 @@ CREATE TRIGGER contracts_audit AFTER INSERT OR UPDATE OR DELETE ON deposit_contr
 
 CREATE TRIGGER operations_audit AFTER INSERT OR UPDATE OR DELETE ON deposit_operations
     FOR EACH ROW EXECUTE FUNCTION audit_trigger();
+
+-- ==========================================
+-- МИНИМАЛЬНЫЕ РОЛИ (4 штуки)
+-- ==========================================
+
+CREATE ROLE admin_role;
+CREATE ROLE manager_role;  
+CREATE ROLE operator_role;
+CREATE ROLE viewer_role;
+
+-- 1. Роль администратора - полный доступ
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO admin_role;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO admin_role;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO admin_role;
+
+-- 2. Роль менеджера - управление депозитами и клиентами  
+GRANT SELECT, INSERT, UPDATE ON clients TO manager_role;
+GRANT SELECT, INSERT, UPDATE ON deposit_contracts TO manager_role;
+GRANT SELECT ON deposit_types TO manager_role;
+GRANT SELECT ON branches TO manager_role;
+GRANT SELECT ON employees TO manager_role;
+GRANT SELECT, INSERT ON deposit_operations TO manager_role;
+GRANT SELECT ON interest_accruals TO manager_role;
+GRANT SELECT, INSERT ON documents TO manager_role;
+GRANT EXECUTE ON FUNCTION open_deposit(INTEGER, INTEGER, DECIMAL) TO manager_role;
+GRANT EXECUTE ON FUNCTION close_deposit(INTEGER) TO manager_role;
+GRANT EXECUTE ON FUNCTION get_balance(INTEGER) TO manager_role;
+GRANT EXECUTE ON FUNCTION find_client(VARCHAR) TO manager_role;
+
+-- 3. Роль операциониста - ограниченные операции
+GRANT SELECT, INSERT ON deposit_operations TO operator_role;
+GRANT SELECT ON deposit_contracts TO operator_role;
+GRANT SELECT ON clients TO operator_role;
+GRANT SELECT ON deposit_types TO operator_role;
+GRANT SELECT ON interest_accruals TO operator_role;
+GRANT EXECUTE ON FUNCTION get_balance(INTEGER) TO operator_role;
+GRANT EXECUTE ON FUNCTION find_client(VARCHAR) TO operator_role;
+GRANT EXECUTE ON FUNCTION calculate_interest(INTEGER) TO operator_role;
+
+-- 4. Роль наблюдателя - только чтение
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO viewer_role;
+
+
+-- ==========================================
+-- СОЗДАНИЕ ПОЛЬЗОВАТЕЛЕЙ БД (7 ПОЛЬЗОВАТЕЛЕЙ)
+-- ==========================================
+
+-- 1. АДМИНИСТРАТОР
+CREATE USER admin_user WITH PASSWORD 'admin123';
+GRANT admin_role TO admin_user;
+
+-- 2. МЕНЕДЖЕР 1
+CREATE USER manager1 WITH PASSWORD 'manager123';
+GRANT manager_role TO manager1;
+
+-- 3. МЕНЕДЖЕР 2  
+CREATE USER manager2 WITH PASSWORD 'manager456';
+GRANT manager_role TO manager2;
+
+-- 4. ОПЕРАЦИОНИСТ 1
+CREATE USER operator1 WITH PASSWORD 'operator123';
+GRANT operator_role TO operator1;
+
+-- 5. ОПЕРАЦИОНИСТ 2
+CREATE USER operator2 WITH PASSWORD 'operator456';
+GRANT operator_role TO operator2;
+
+-- 6. НАБЛЮДАТЕЛЬ 1
+CREATE USER viewer1 WITH PASSWORD 'viewer123';
+GRANT viewer_role TO viewer1;
+
+-- 7. НАБЛЮДАТЕЛЬ 2
+CREATE USER viewer2 WITH PASSWORD 'viewer456';
+GRANT viewer_role TO viewer2;
