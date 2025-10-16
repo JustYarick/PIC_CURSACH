@@ -6,6 +6,7 @@
         xmlns:viewModel="clr-namespace:PIC_CURSACH.ViewModel"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:utils="clr-namespace:PIC_CURSACH.utils"
+        xmlns:controls="clr-namespace:PIC_CURSACH.View.controls"
         mc:Ignorable="d"
         Background="{DynamicResource WindowBackground}"
         Title="Панель администратора" Height="600" Width="1000">
@@ -22,182 +23,119 @@
 
         <!-- Основной контент -->
         <TabControl Grid.Row="1" Margin="10">
+            <!-- Клиенты -->
             <TabItem Header="Клиенты" Padding="10">
-                <Grid>
-                    <!-- 2 строки: таблица и кнопки -->
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <!-- Таблица занимает всё доступное пространство -->
-                    <DataGrid Grid.Row="0"
-                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                              ItemsSource="{Binding Clients}" AutoGenerateColumns="False"
-                              SelectedItem="{Binding SelectedClient, Mode=TwoWay}"
-                              CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
-                              Margin="0,0,0,8"
-                              MouseDoubleClick="ClientsDataGrid_MouseDoubleClick">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding ClientId}" IsReadOnly="True" Width="60" />
-                            <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="*" />
-                            <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" Width="*" />
-                            <DataGridTextColumn Header="Паспорт" Binding="{Binding Passport}" Width="*" />
-                            <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="*" />
-                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-
-                    <!-- Кнопки слева внизу -->
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,0,0,8">
-                        <ui:Button Content="Добавить" Command="{Binding ShowAddFormCommand}"
-                                   Appearance="Primary" Margin="5,0,0,0" Width="100" />
-                        <ui:Button Content="Редактировать" Command="{Binding ShowEditFormCommand}"
-                                   IsEnabled="{Binding SelectedClient, Converter={x:Static utils:NullToBoolConverter.Instance}}"
-                                   Margin="5,0,0,0" Width="150" />
-                        <ui:Button Content="Удалить" Command="{Binding DeleteClientCommand}"
-                                   IsEnabled="{Binding SelectedClient, Converter={x:Static utils:NullToBoolConverter.Instance}}"
-                                   Appearance="Danger" Margin="5,0,0,0" Width="100" />
-                    </StackPanel>
-                </Grid>
+                <controls:EntityTableControl
+                    ItemsSource="{Binding Clients}"
+                    SelectedItem="{Binding SelectedClient, Mode=TwoWay}"
+                    AddCommand="{Binding ShowAddFormCommand}"
+                    EditCommand="{Binding ShowEditFormCommand}"
+                    DeleteCommand="{Binding DeleteClientCommand}"
+                    CanAdd="True"
+                    CanEdit="True"
+                    CanDelete="True"
+                    RowDoubleClick="ClientsDataGrid_MouseDoubleClick">
+                    <controls:EntityTableControl.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding ClientId}"
+                                            IsReadOnly="True" Width="60" />
+                        <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="*" />
+                        <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" Width="*" />
+                        <DataGridTextColumn Header="Паспорт" Binding="{Binding Passport}" Width="*" />
+                        <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="*" />
+                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*" />
+                    </controls:EntityTableControl.Columns>
+                </controls:EntityTableControl>
             </TabItem>
 
+            <!-- Сотрудники -->
             <TabItem Header="Сотрудники" Padding="10">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <DataGrid Grid.Row="0"
-                              ItemsSource="{Binding Employees}" AutoGenerateColumns="False"
-                              SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
-                              CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
-                              MouseDoubleClick="EmployeesDataGrid_MouseDoubleClick"
-                              Margin="0,0,0,8">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding EmployeeId}" IsReadOnly="True" Width="60" />
-                            <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="*" />
-                            <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" Width="*" />
-                            <DataGridTextColumn Header="Должность" Binding="{Binding Position}" Width="*" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,0,0,8">
-                        <ui:Button Content="Добавить" Command="{Binding ShowAddEmployeeFormCommand}" Appearance="Primary" Margin="5,0,0,0" Width="100" />
-                        <ui:Button Content="Редактировать" Command="{Binding ShowEditEmployeeFormCommand}"
-                                   IsEnabled="{Binding SelectedEmployee, Converter={x:Static utils:NullToBoolConverter.Instance}}"
-                                   Margin="5,0,0,0" Width="150" />
-                        <ui:Button Content="Удалить" Command="{Binding DeleteEmployeeCommand}"
-                                   IsEnabled="{Binding SelectedEmployee, Converter={x:Static utils:NullToBoolConverter.Instance}}"
-                                   Appearance="Danger" Margin="5,0,0,0" Width="100" />
-                    </StackPanel>
-                </Grid>
+                <controls:EntityTableControl
+                    ItemsSource="{Binding Employees}"
+                    SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
+                    AddCommand="{Binding ShowAddEmployeeFormCommand}"
+                    EditCommand="{Binding ShowEditEmployeeFormCommand}"
+                    DeleteCommand="{Binding DeleteEmployeeCommand}"
+                    CanAdd="True"
+                    CanEdit="True"
+                    CanDelete="True"
+                    RowDoubleClick="EmployeesDataGrid_MouseDoubleClick">
+                    <controls:EntityTableControl.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding EmployeeId}"
+                                            IsReadOnly="True" Width="60" />
+                        <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="*" />
+                        <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" Width="*" />
+                        <DataGridTextColumn Header="Должность" Binding="{Binding Position}" Width="*" />
+                    </controls:EntityTableControl.Columns>
+                </controls:EntityTableControl>
             </TabItem>
 
+            <!-- Операции по депозитам -->
             <TabItem Header="Операции по депозитам" Padding="10">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <DataGrid Grid.Row="0"
-                              ItemsSource="{Binding DepositOperations}" AutoGenerateColumns="False"
-                              SelectedItem="{Binding SelectedDepositOperation, Mode=TwoWay}"
-                              CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
-                              Margin="0,0,0,8">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding OperationId}" Width="60" />
-                            <DataGridTextColumn Header="Договор" Binding="{Binding ContractId}" Width="*" />
-                            <DataGridTextColumn Header="Тип операции" Binding="{Binding OperationType}" Width="*" />
-                            <DataGridTextColumn Header="Сумма" Binding="{Binding Amount}" Width="*" />
-                            <DataGridTextColumn Header="Дата" Binding="{Binding OperationDate}" Width="*" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,0,0,8">
-                        <ui:Button Content="Добавить" Command="{Binding ShowAddDepositOperationFormCommand}" Appearance="Primary" Margin="5,0,0,0" Width="100" />
-                        <ui:Button Content="Редактировать" Command="{Binding ShowEditDepositOperationFormCommand}"
-                                   IsEnabled="{Binding SelectedDepositOperation, Converter={x:Static utils:NullToBoolConverter.Instance}}"
-                                   Margin="5,0,0,0" Width="150" />
-                        <ui:Button Content="Удалить" Command="{Binding DeleteDepositOperationCommand}"
-                                   IsEnabled="{Binding SelectedDepositOperation, Converter={x:Static utils:NullToBoolConverter.Instance}}"
-                                   Appearance="Danger" Margin="5,0,0,0" Width="100" />
-                    </StackPanel>
-                </Grid>
+                <controls:EntityTableControl
+                    ItemsSource="{Binding DepositOperations}"
+                    SelectedItem="{Binding SelectedDepositOperation, Mode=TwoWay}"
+                    AddCommand="{Binding ShowAddDepositOperationFormCommand}"
+                    EditCommand="{Binding ShowEditDepositOperationFormCommand}"
+                    DeleteCommand="{Binding DeleteDepositOperationCommand}"
+                    CanAdd="True"
+                    CanEdit="True"
+                    CanDelete="True">
+                    <controls:EntityTableControl.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding OperationId}" Width="60" />
+                        <DataGridTextColumn Header="Договор" Binding="{Binding ContractId}" Width="*" />
+                        <DataGridTextColumn Header="Тип операции" Binding="{Binding OperationType}" Width="*" />
+                        <DataGridTextColumn Header="Сумма" Binding="{Binding Amount}" Width="*" />
+                        <DataGridTextColumn Header="Дата" Binding="{Binding OperationDate}" Width="*" />
+                    </controls:EntityTableControl.Columns>
+                </controls:EntityTableControl>
             </TabItem>
 
+            <!-- Типы депозитов -->
             <TabItem Header="Типы депозитов" Padding="10">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <DataGrid Grid.Row="0"
-                              ItemsSource="{Binding DepositTypes}" AutoGenerateColumns="False"
-                              SelectedItem="{Binding SelectedDepositType, Mode=TwoWay}"
-                              CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
-                              MouseDoubleClick="DepositTypeDataGrid_MouseDoubleClick"
-                              Margin="0,0,0,8">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding TypeId}" Width="60" />
-                            <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*" />
-                            <DataGridTextColumn Header="Процент" Binding="{Binding InterestRate}" Width="*" />
-                            <DataGridTextColumn Header="Миним. сумма" Binding="{Binding MinAmount}" Width="*" />
-                            <DataGridTextColumn Header="Срок (дней)" Binding="{Binding TermDays}" Width="*" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,0,0,8">
-                        <ui:Button Content="Добавить" Command="{Binding ShowAddDepositTypeFormCommand}" Appearance="Primary" Margin="5,0,0,0" Width="100" />
-                        <ui:Button Content="Редактировать" Command="{Binding ShowEditDepositTypeFormCommand}"
-                                   IsEnabled="{Binding SelectedDepositType, Converter={x:Static utils:NullToBoolConverter.Instance}}"
-                                   Margin="5,0,0,0" Width="150" />
-                        <ui:Button Content="Удалить" Command="{Binding DeleteDepositTypeCommand}"
-                                   IsEnabled="{Binding SelectedDepositType, Converter={x:Static utils:NullToBoolConverter.Instance}}"
-                                   Appearance="Danger" Margin="5,0,0,0" Width="100" />
-                    </StackPanel>
-                </Grid>
+                <controls:EntityTableControl
+                    ItemsSource="{Binding DepositTypes}"
+                    SelectedItem="{Binding SelectedDepositType, Mode=TwoWay}"
+                    AddCommand="{Binding ShowAddDepositTypeFormCommand}"
+                    EditCommand="{Binding ShowEditDepositTypeFormCommand}"
+                    DeleteCommand="{Binding DeleteDepositTypeCommand}"
+                    CanAdd="True"
+                    CanEdit="True"
+                    CanDelete="True"
+                    RowDoubleClick="DepositTypeDataGrid_MouseDoubleClick">
+                    <controls:EntityTableControl.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding TypeId}" Width="60" />
+                        <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*" />
+                        <DataGridTextColumn Header="Процент" Binding="{Binding InterestRate}" Width="*" />
+                        <DataGridTextColumn Header="Миним. сумма" Binding="{Binding MinAmount}" Width="*" />
+                        <DataGridTextColumn Header="Срок (дней)" Binding="{Binding TermDays}" Width="*" />
+                    </controls:EntityTableControl.Columns>
+                </controls:EntityTableControl>
             </TabItem>
 
+            <!-- Депозитные договоры -->
             <TabItem Header="Депозитные договоры" Padding="10">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <DataGrid Grid.Row="0"
-                              ItemsSource="{Binding DepositContracts}" AutoGenerateColumns="False"
-                              SelectedItem="{Binding SelectedDepositContract, Mode=TwoWay}"
-                              CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
-                              Margin="0,0,0,8"
-                              MouseDoubleClick="DepositContractDataGrid_MouseDoubleClick">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding ContractId}" Width="60" />
-                            <DataGridTextColumn Header="Клиент ID" Binding="{Binding ClientId}" Width="*" />
-                            <DataGridTextColumn Header="Тип депозита ID" Binding="{Binding TypeId}" Width="*" />
-                            <DataGridTextColumn Header="Сотрудник ID" Binding="{Binding EmployeeId}" Width="*" />
-                            <DataGridTextColumn Header="Филиал ID" Binding="{Binding BranchId}" Width="*" />
-                            <DataGridTextColumn Header="Сумма" Binding="{Binding Amount}" Width="*" />
-                            <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate, StringFormat=d}" Width="*" />
-                            <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate, StringFormat=d}" Width="*" />
-                            <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="*" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,0,0,8">
-                        <ui:Button Content="Добавить" Command="{Binding ShowAddDepositContractFormCommand}" Appearance="Primary" Margin="5,0,0,0" Width="100" />
-                        <ui:Button Content="Редактировать" Command="{Binding ShowEditDepositContractFormCommand}"
-                                   IsEnabled="{Binding SelectedDepositContract, Converter={x:Static utils:NullToBoolConverter.Instance}}"
-                                   Margin="5,0,0,0" Width="150" />
-                        <ui:Button Content="Удалить" Command="{Binding DeleteDepositContractCommand}"
-                                   IsEnabled="{Binding SelectedDepositContract, Converter={x:Static utils:NullToBoolConverter.Instance}}"
-                                   Appearance="Danger" Margin="5,0,0,0" Width="100" />
-                    </StackPanel>
-                </Grid>
+                <controls:EntityTableControl
+                    ItemsSource="{Binding DepositContracts}"
+                    SelectedItem="{Binding SelectedDepositContract, Mode=TwoWay}"
+                    AddCommand="{Binding ShowAddDepositContractFormCommand}"
+                    EditCommand="{Binding ShowEditDepositContractFormCommand}"
+                    DeleteCommand="{Binding DeleteDepositContractCommand}"
+                    CanAdd="True"
+                    CanEdit="True"
+                    CanDelete="True"
+                    RowDoubleClick="DepositContractDataGrid_MouseDoubleClick">
+                    <controls:EntityTableControl.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding ContractId}" Width="60" />
+                        <DataGridTextColumn Header="Клиент ID" Binding="{Binding ClientId}" Width="*" />
+                        <DataGridTextColumn Header="Тип депозита ID" Binding="{Binding TypeId}" Width="*" />
+                        <DataGridTextColumn Header="Сотрудник ID" Binding="{Binding EmployeeId}" Width="*" />
+                        <DataGridTextColumn Header="Филиал ID" Binding="{Binding BranchId}" Width="*" />
+                        <DataGridTextColumn Header="Сумма" Binding="{Binding Amount}" Width="*" />
+                        <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate, StringFormat=d}" Width="*" />
+                        <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate, StringFormat=d}" Width="*" />
+                        <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="*" />
+                    </controls:EntityTableControl.Columns>
+                </controls:EntityTableControl>
             </TabItem>
         </TabControl>
     </Grid>

@@ -1,0 +1,42 @@
+<UserControl x:Class="PIC_CURSACH.View.controls.EntityTableControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:utils="clr-namespace:PIC_CURSACH.utils">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DataGrid Grid.Row="0"
+                  Name="DataGridControl"
+                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  IsReadOnly="True"
+                  Margin="0,0,0,8">
+        </DataGrid>
+
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    Margin="4,0,0,8">
+            <ui:Button Name="AddButton"
+                       Content="Добавить"
+                       Appearance="Primary"
+                       Margin="5,0,0,0"
+                       Width="100" />
+            <ui:Button Name="EditButton"
+                       Content="Редактировать"
+                       Margin="5,0,0,0"
+                       Width="150" />
+            <ui:Button Name="DeleteButton"
+                       Content="Удалить"
+                       Appearance="Danger"
+                       Margin="5,0,0,0"
+                       Width="100" />
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -20,8 +20,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="ViewModel\controls\entityTables\" />
       <Folder Include="ViewModel\entityDetails\" />
-      <Folder Include="View\tables\" />
+      <Folder Include="View\controls\entityTabels\" />
     </ItemGroup>
 
 </Project>

@@ -3,6 +3,10 @@ using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
 using PIC_CURSACH.ViewModel;
 
+using System.Windows;
+using System.Windows.Input;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace PIC_CURSACH.View;
 
 public partial class AdminWindow : Window
@@ -29,7 +33,7 @@ public partial class AdminWindow : Window
 
     private void ClientsDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (DataContext is AdminViewModel vm)
+        if (DataContext is AdminViewModel vm && vm.SelectedClient != null)
         {
             ViewModel.OpenClientDetails();
         }
@@ -37,7 +41,7 @@ public partial class AdminWindow : Window
 
     private void EmployeesDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (DataContext is AdminViewModel vm)
+        if (DataContext is AdminViewModel vm && vm.SelectedEmployee != null)
         {
             ViewModel.OpenEmployeeDetails();
         }
@@ -45,7 +49,7 @@ public partial class AdminWindow : Window
 
     private void DepositTypeDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (DataContext is AdminViewModel vm)
+        if (DataContext is AdminViewModel vm && vm.SelectedDepositType != null)
         {
             ViewModel.OpenDepositTypeDetails();
         }
@@ -53,7 +57,7 @@ public partial class AdminWindow : Window
 
     private void DepositContractDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (DataContext is AdminViewModel vm)
+        if (DataContext is AdminViewModel vm && vm.SelectedDepositContract != null)
         {
             ViewModel.OpenDepositContractDetails();
         }
