@@ -6,7 +6,16 @@ namespace PIC_CURSACH.Model.entity;
 [Table("employees")]
 public class Employee
 {
-    [Key] [Column("employeeid")] public int EmployeeId { get; set; }
-    [Column("firstname")] public string FirstName { get; set; }
-    [Column("position")] public string Position { get; set; }
+    [Key]
+    [Column("employee_id")]
+    public int EmployeeId { get; set; }
+
+    [Column("first_name")]
+    public string FirstName { get; set; }
+
+    [Column("last_name")]
+    public string LastName { get; set; }
+
+    [Column("position")]
+    public string Position { get; set; }
 }

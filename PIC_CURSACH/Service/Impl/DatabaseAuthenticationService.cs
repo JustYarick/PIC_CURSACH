@@ -61,6 +61,9 @@ public class DatabaseAuthenticationService : IAuthenticationService
                 Username = currentUser,
                 Role = appRole
             };
+            conn.Close();
+
+            App.CurrentServiceConfigurator.RegisterDbContext(username, password);
 
             return result;
         }

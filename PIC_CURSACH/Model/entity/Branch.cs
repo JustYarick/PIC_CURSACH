@@ -6,7 +6,16 @@ namespace PIC_CURSACH.Model.entity;
 [Table("branches")]
 public class Branch
 {
-    [Key] [Column("branchid")] public int BranchId { get; set; }
-    [Column("name")] public string Name { get; set; }
-    [Column("address")] public string? Address { get; set; }
+    [Key]
+    [Column("branch_id")]
+    public int BranchId { get; set; }
+
+    [Required]
+    [MaxLength(100)]
+    [Column("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [MaxLength(200)]
+    [Column("address")]
+    public string? Address { get; set; }
 }

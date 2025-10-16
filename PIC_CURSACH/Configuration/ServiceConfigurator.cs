@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PIC_CURSACH.Service.Impl;
 using PIC_CURSACH.Service.Interfaces;
+using PIC_CURSACH.ViewModel;
 
 namespace PIC_CURSACH.Configuration;
 
@@ -8,9 +10,10 @@ public class ServiceConfigurator
 {
     public IServiceProvider Services { get; private set; } = ConfigureDiServices();
 
+    private static ServiceCollection serviceCollection = new();
+
     private static IServiceProvider ConfigureDiServices()
     {
-        var serviceCollection = new ServiceCollection();
         ConfigureServices(serviceCollection);
         return serviceCollection.BuildServiceProvider();
     }
@@ -22,5 +25,26 @@ public class ServiceConfigurator
 
         // Services
         services.AddSingleton<IAuthenticationService, DatabaseAuthenticationService>();
+    }
+
+    public void RegisterDbContext(string username, string password)
+    {
+        string connStr = $"Host=localhost;Database=pic_cursach;Username={username};Password={password}";
+
+        serviceCollection.AddDbContext<DepositContext>(options =>
+            options.UseNpgsql(connStr));
+
+        IServiceCollection services =  serviceCollection;
+
+        // Services require DB context
+        services.AddSingleton<IClientService, ClientService>();
+        services.AddSingleton<IEmployeeService, EmployeeService>();
+        services.AddSingleton<IDepositContractService, DepositContractService>();
+        services.AddSingleton<IDepositOperationService, DepositOperationService>();
+        services.AddSingleton<IDepositTypeService, DepositTypeService>();
+
+        services.AddTransient<AdminViewModel>();
+
+        Services = serviceCollection.BuildServiceProvider();
     }
 }

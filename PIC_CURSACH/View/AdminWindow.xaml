@@ -3,24 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:viewModel="clr-namespace:PIC_CURSACH.ViewModel"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:utils="clr-namespace:PIC_CURSACH.utils"
         mc:Ignorable="d"
         Background="{DynamicResource WindowBackground}"
-        Title="AdminWindow" Height="450" Width="800">
-    <!-- <Window.DataContext> -->
-    <!--     <viewModel:AdminViewModel/> -->
-    <!-- </Window.DataContext> -->
-    <Window.Resources>
-        <utils:NullToBoolConverter x:Key="NullToBoolConverter"/>
-    </Window.Resources>
-
+        Title="Панель администратора" Height="600" Width="1000">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
 
         <!-- Заголовок -->
@@ -30,64 +22,181 @@
 
         <!-- Основной контент -->
         <TabControl Grid.Row="1" Margin="10">
-            <!-- Управление пользователями -->
-            <TabItem Header="Пользователи" Padding="10">
-                <StackPanel>
-                    <!-- Пример: таблица пользователей с возможностью загрузки данных, редактирования и удаления -->
-                    <DataGrid ItemsSource="{Binding Users}"
-                              SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
-                              AutoGenerateColumns="False"
-                              Height="400"
-                              Margin="0,0,0,12">
+            <TabItem Header="Клиенты" Padding="10">
+                <Grid>
+                    <!-- 2 строки: таблица и кнопки -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Таблица занимает всё доступное пространство -->
+                    <DataGrid Grid.Row="0"
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                              ItemsSource="{Binding Clients}" AutoGenerateColumns="False"
+                              SelectedItem="{Binding SelectedClient, Mode=TwoWay}"
+                              CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
+                              Margin="0,0,0,8">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding UserId}" Width="50" IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Логин" Binding="{Binding Username}" Width="*" IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Роль" Binding="{Binding Role.RoleName}" Width="150" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="ID" Binding="{Binding ClientId}" IsReadOnly="True" Width="60" />
+                            <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="*" />
+                            <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" Width="*" />
+                            <DataGridTextColumn Header="Паспорт" Binding="{Binding Passport}" Width="*" />
+                            <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="*" />
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <ui:Button Content="Обновить список"
-                                   Command="{Binding LoadUsersCommand}"
-                                   Margin="10"
-                                   Width="140"/>
-                        <ui:Button Content="Удалить"
-                                   Command="{Binding DeleteUserCommand}"
-                                   Margin="10"
-                                   Width="140"
-                                   IsEnabled="{Binding SelectedUser, Converter={StaticResource NullToBoolConverter}}"/>
+                    <!-- Кнопки слева внизу -->
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,0,0,8">
+                        <ui:Button Content="Добавить" Command="{Binding ShowAddFormCommand}"
+                                   Appearance="Primary" Margin="5,0,0,0" Width="100" />
+                        <ui:Button Content="Редактировать" Command="{Binding ShowEditFormCommand}"
+                                   IsEnabled="{Binding SelectedClient, Converter={x:Static utils:NullToBoolConverter.Instance}}"
+                                   Margin="5,0,0,0" Width="150" />
+                        <ui:Button Content="Удалить" Command="{Binding DeleteClientCommand}"
+                                   IsEnabled="{Binding SelectedClient, Converter={x:Static utils:NullToBoolConverter.Instance}}"
+                                   Appearance="Danger" Margin="5,0,0,0" Width="100" />
                     </StackPanel>
-                </StackPanel>
+                </Grid>
             </TabItem>
 
-            <!-- Журнал аудита -->
-            <TabItem Header="Журнал аудита" Padding="10">
-                <DataGrid ItemsSource="{Binding AuditLogs}"
-                          AutoGenerateColumns="False"
-                          Margin="0"
-                          IsReadOnly="True"
-                          Height="560">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Время" Binding="{Binding ChangedAt}" Width="180"/>
-                        <DataGridTextColumn Header="Таблица" Binding="{Binding TableName}" Width="100"/>
-                        <DataGridTextColumn Header="Операция" Binding="{Binding Operation}" Width="100"/>
-                        <DataGridTextColumn Header="Пользователь" Binding="{Binding ChangedBy}" Width="150"/>
-                        <DataGridTextColumn Header="Изменения (старое)" Binding="{Binding OldValues}" Width="*" />
-                        <DataGridTextColumn Header="Изменения (новое)" Binding="{Binding NewValues}" Width="*" />
-                    </DataGrid.Columns>
-                </DataGrid>
+            <TabItem Header="Сотрудники" Padding="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0"
+                              ItemsSource="{Binding Employees}" AutoGenerateColumns="False"
+                              SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
+                              CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
+                              Margin="0,0,0,8">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding EmployeeId}" IsReadOnly="True" Width="60" />
+                            <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="*" />
+                            <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" Width="*" />
+                            <DataGridTextColumn Header="Должность" Binding="{Binding Position}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,0,0,8">
+                        <ui:Button Content="Добавить" Command="{Binding ShowAddEmployeeFormCommand}" Appearance="Primary" Margin="5,0,0,0" Width="100" />
+                        <ui:Button Content="Редактировать" Command="{Binding ShowEditEmployeeFormCommand}"
+                                   IsEnabled="{Binding SelectedEmployee, Converter={x:Static utils:NullToBoolConverter.Instance}}"
+                                   Margin="5,0,0,0" Width="150" />
+                        <ui:Button Content="Удалить" Command="{Binding DeleteEmployeeCommand}"
+                                   IsEnabled="{Binding SelectedEmployee, Converter={x:Static utils:NullToBoolConverter.Instance}}"
+                                   Appearance="Danger" Margin="5,0,0,0" Width="100" />
+                    </StackPanel>
+                </Grid>
             </TabItem>
 
-            <!-- Системное администрирование -->
-            <TabItem Header="Системные настройки" Padding="10">
-                <TextBlock Text="Здесь будут системные настройки и другие административные функции."
-                           FontSize="14" Foreground="Gray" Margin="10"/>
+            <TabItem Header="Операции по депозитам" Padding="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0"
+                              ItemsSource="{Binding DepositOperations}" AutoGenerateColumns="False"
+                              SelectedItem="{Binding SelectedDepositOperation, Mode=TwoWay}"
+                              CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
+                              Margin="0,0,0,8">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding OperationId}" Width="60" />
+                            <DataGridTextColumn Header="Договор" Binding="{Binding ContractId}" Width="*" />
+                            <DataGridTextColumn Header="Тип операции" Binding="{Binding OperationType}" Width="*" />
+                            <DataGridTextColumn Header="Сумма" Binding="{Binding Amount}" Width="*" />
+                            <DataGridTextColumn Header="Дата" Binding="{Binding OperationDate}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,0,0,8">
+                        <ui:Button Content="Добавить" Command="{Binding ShowAddDepositOperationFormCommand}" Appearance="Primary" Margin="5,0,0,0" Width="100" />
+                        <ui:Button Content="Редактировать" Command="{Binding ShowEditDepositOperationFormCommand}"
+                                   IsEnabled="{Binding SelectedDepositOperation, Converter={x:Static utils:NullToBoolConverter.Instance}}"
+                                   Margin="5,0,0,0" Width="150" />
+                        <ui:Button Content="Удалить" Command="{Binding DeleteDepositOperationCommand}"
+                                   IsEnabled="{Binding SelectedDepositOperation, Converter={x:Static utils:NullToBoolConverter.Instance}}"
+                                   Appearance="Danger" Margin="5,0,0,0" Width="100" />
+                    </StackPanel>
+                </Grid>
             </TabItem>
+
+            <TabItem Header="Типы депозитов" Padding="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0"
+                              ItemsSource="{Binding DepositTypes}" AutoGenerateColumns="False"
+                              SelectedItem="{Binding SelectedDepositType, Mode=TwoWay}"
+                              CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
+                              Margin="0,0,0,8">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding TypeId}" Width="60" />
+                            <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*" />
+                            <DataGridTextColumn Header="Процент" Binding="{Binding InterestRate}" Width="*" />
+                            <DataGridTextColumn Header="Миним. сумма" Binding="{Binding MinAmount}" Width="*" />
+                            <DataGridTextColumn Header="Срок (дней)" Binding="{Binding TermDays}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,0,0,8">
+                        <ui:Button Content="Добавить" Command="{Binding ShowAddDepositTypeFormCommand}" Appearance="Primary" Margin="5,0,0,0" Width="100" />
+                        <ui:Button Content="Редактировать" Command="{Binding ShowEditDepositTypeFormCommand}"
+                                   IsEnabled="{Binding SelectedDepositType, Converter={x:Static utils:NullToBoolConverter.Instance}}"
+                                   Margin="5,0,0,0" Width="150" />
+                        <ui:Button Content="Удалить" Command="{Binding DeleteDepositTypeCommand}"
+                                   IsEnabled="{Binding SelectedDepositType, Converter={x:Static utils:NullToBoolConverter.Instance}}"
+                                   Appearance="Danger" Margin="5,0,0,0" Width="100" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Депозитные договоры" Padding="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0"
+                              ItemsSource="{Binding DepositContracts}" AutoGenerateColumns="False"
+                              SelectedItem="{Binding SelectedDepositContract, Mode=TwoWay}"
+                              CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
+                              Margin="0,0,0,8">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding ContractId}" Width="60" />
+                            <DataGridTextColumn Header="Клиент ID" Binding="{Binding ClientId}" Width="*" />
+                            <DataGridTextColumn Header="Тип депозита ID" Binding="{Binding TypeId}" Width="*" />
+                            <DataGridTextColumn Header="Сотрудник ID" Binding="{Binding EmployeeId}" Width="*" />
+                            <DataGridTextColumn Header="Филиал ID" Binding="{Binding BranchId}" Width="*" />
+                            <DataGridTextColumn Header="Сумма" Binding="{Binding Amount}" Width="*" />
+                            <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate, StringFormat=d}" Width="*" />
+                            <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate, StringFormat=d}" Width="*" />
+                            <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,0,0,8">
+                        <ui:Button Content="Добавить" Command="{Binding ShowAddDepositContractFormCommand}" Appearance="Primary" Margin="5,0,0,0" Width="100" />
+                        <ui:Button Content="Редактировать" Command="{Binding ShowEditDepositContractFormCommand}"
+                                   IsEnabled="{Binding SelectedDepositContract, Converter={x:Static utils:NullToBoolConverter.Instance}}"
+                                   Margin="5,0,0,0" Width="150" />
+                        <ui:Button Content="Удалить" Command="{Binding DeleteDepositContractCommand}"
+                                   IsEnabled="{Binding SelectedDepositContract, Converter={x:Static utils:NullToBoolConverter.Instance}}"
+                                   Appearance="Danger" Margin="5,0,0,0" Width="100" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+
         </TabControl>
-
-        <!-- Статус -->
-        <StatusBar Grid.Row="2" Padding="5">
-            <StatusBarItem Content="Готов" />
-        </StatusBar>
     </Grid>
 </Window>

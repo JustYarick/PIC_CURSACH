@@ -1,30 +1,29 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PIC_CURSACH.Model.entity
+namespace PIC_CURSACH.Model.entity;
+
+[Table("deposit_operations")]
+public class DepositOperation
 {
-    [Table("depositoperations")]
-    public class DepositOperation
-    {
-        [Key]
-        [Column("operationid")]
-        public int OperationId { get; set; }
+    [Key]
+    [Column("operation_id")]
+    public int OperationId { get; set; }
 
-        [Column("contractid")]
-        public int ContractId { get; set; }
+    [Column("contract_id")]
+    public int ContractId { get; set; }
 
-        [Required]
-        [MaxLength(20)]
-        [Column("operationtype")]
-        public string OperationType { get; set; } = string.Empty;
+    [Required]
+    [MaxLength(20)]
+    [Column("operation_type")]
+    public string OperationType { get; set; } = string.Empty;
 
-        [Column("amount")]
-        public decimal Amount { get; set; }
+    [Column("amount")]
+    public decimal Amount { get; set; }
 
-        [Column("operationdate")]
-        public DateTime OperationDate { get; set; } = DateTime.Now;
+    [Column("operation_date")]
+    public DateTime OperationDate { get; set; } = DateTime.Now;
 
-        [ForeignKey("ContractId")]
-        public virtual DepositContract DepositContract { get; set; } = null!;
-    }
+    [ForeignKey("ContractId")]
+    public DepositContract DepositContract { get; set; } = null!;
 }

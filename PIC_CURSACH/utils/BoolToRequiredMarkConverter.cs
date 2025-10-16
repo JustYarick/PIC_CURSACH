@@ -3,13 +3,11 @@ using System.Windows.Data;
 
 namespace PIC_CURSACH.utils;
 
-public class NullToBoolConverter : IValueConverter
+public class BoolToRequiredMarkConverter : IValueConverter
 {
-    public static NullToBoolConverter Instance { get; } = new();
-
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return value != null;
+        return (bool)value ? "*" : "";
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
