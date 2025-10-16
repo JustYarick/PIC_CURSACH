@@ -34,4 +34,10 @@ public class Client
     public string? Email { get; set; }
 
     public virtual ICollection<DepositContract> DepositContracts { get; set; } = new List<DepositContract>();
+
+    public void AddDepositContract(DepositContract contract)
+    {
+        contract.Client = this;
+        DepositContracts.Add(contract);
+    }
 }

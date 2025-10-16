@@ -36,14 +36,32 @@ public class DepositContract
     public string Status { get; set; } = "ACTIVE";
 
     [ForeignKey("ClientId")]
-    public Client Client { get; set; } = null!;
+    public virtual Client Client { get; set; } = null!;
 
     [ForeignKey("TypeId")]
-    public DepositType DepositType { get; set; } = null!;
+    public virtual DepositType DepositType { get; set; } = null!;
 
     [ForeignKey("EmployeeId")]
-    public Employee Employee { get; set; } = null!;
+    public virtual Employee Employee { get; set; } = null!;
 
     [ForeignKey("BranchId")]
-    public Branch Branch { get; set; } = null!;
+    public virtual Branch Branch { get; set; } = null!;
+
+    public virtual ICollection<DepositOperation> DepositOperations { get; set; } = new List<DepositOperation>();
+
+    public void AddDepositOperation(DepositOperation operation)
+    {
+        operation.DepositContract = this;
+        DepositOperations.Add(operation);
+    }
+
+    [NotMapped]
+    public string ClientDisplay => Client != null ? $"{Client.FirstName} {Client.LastName} | {Client.Passport}" : "";
+    [NotMapped]
+    public string EmployeeDisplay => Employee != null ? $"{Employee.FirstName} {Employee.LastName}, {Employee.Position}" : "";
+    [NotMapped]
+    public string BranchDisplay => Branch != null ? $"{Branch.Name}, {Branch.Address}" : "";
+    [NotMapped]
+    public string DepositTypeDisplay => DepositType != null ? $"{DepositType.Name} ({DepositType.InterestRate}% на {DepositType.TermDays} дн., мин. {DepositType.MinAmount})" : "";
+
 }

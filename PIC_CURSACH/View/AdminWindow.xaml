@@ -36,7 +36,8 @@
                               ItemsSource="{Binding Clients}" AutoGenerateColumns="False"
                               SelectedItem="{Binding SelectedClient, Mode=TwoWay}"
                               CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
-                              Margin="0,0,0,8">
+                              Margin="0,0,0,8"
+                              MouseDoubleClick="ClientsDataGrid_MouseDoubleClick">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" Binding="{Binding ClientId}" IsReadOnly="True" Width="60" />
                             <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="*" />
@@ -72,6 +73,7 @@
                               ItemsSource="{Binding Employees}" AutoGenerateColumns="False"
                               SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
                               CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
+                              MouseDoubleClick="EmployeesDataGrid_MouseDoubleClick"
                               Margin="0,0,0,8">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" Binding="{Binding EmployeeId}" IsReadOnly="True" Width="60" />
@@ -137,6 +139,7 @@
                               ItemsSource="{Binding DepositTypes}" AutoGenerateColumns="False"
                               SelectedItem="{Binding SelectedDepositType, Mode=TwoWay}"
                               CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
+                              MouseDoubleClick="DepositTypeDataGrid_MouseDoubleClick"
                               Margin="0,0,0,8">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" Binding="{Binding TypeId}" Width="60" />
@@ -170,7 +173,8 @@
                               ItemsSource="{Binding DepositContracts}" AutoGenerateColumns="False"
                               SelectedItem="{Binding SelectedDepositContract, Mode=TwoWay}"
                               CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
-                              Margin="0,0,0,8">
+                              Margin="0,0,0,8"
+                              MouseDoubleClick="DepositContractDataGrid_MouseDoubleClick">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" Binding="{Binding ContractId}" Width="60" />
                             <DataGridTextColumn Header="Клиент ID" Binding="{Binding ClientId}" Width="*" />
@@ -195,8 +199,6 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-
-
         </TabControl>
     </Grid>
 </Window>

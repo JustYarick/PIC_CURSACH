@@ -32,7 +32,8 @@ public class ServiceConfigurator
         string connStr = $"Host=localhost;Database=pic_cursach;Username={username};Password={password}";
 
         serviceCollection.AddDbContext<DepositContext>(options =>
-            options.UseNpgsql(connStr));
+            options.UseLazyLoadingProxies()
+                .UseNpgsql(connStr));
 
         IServiceCollection services =  serviceCollection;
 
@@ -42,8 +43,10 @@ public class ServiceConfigurator
         services.AddSingleton<IDepositContractService, DepositContractService>();
         services.AddSingleton<IDepositOperationService, DepositOperationService>();
         services.AddSingleton<IDepositTypeService, DepositTypeService>();
+        services.AddSingleton<IBranchService, BranchService>();
 
         services.AddTransient<AdminViewModel>();
+        services.AddTransient<ManagerViewModel>();
 
         Services = serviceCollection.BuildServiceProvider();
     }

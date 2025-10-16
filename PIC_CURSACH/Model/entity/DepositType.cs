@@ -23,4 +23,6 @@ public class DepositType
 
     [Column("term_days")]
     public int TermDays { get; set; }
+
+    public virtual ICollection<DepositContract> DepositContracts { get; set; } = new List<DepositContract>();
 }

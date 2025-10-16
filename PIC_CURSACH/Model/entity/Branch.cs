@@ -18,4 +18,6 @@ public class Branch
     [MaxLength(200)]
     [Column("address")]
     public string? Address { get; set; }
+
+    public virtual ICollection<DepositContract> DepositContracts { get; set; } = new List<DepositContract>();
 }

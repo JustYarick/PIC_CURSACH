@@ -10,12 +10,20 @@ public class Employee
     [Column("employee_id")]
     public int EmployeeId { get; set; }
 
+    [Required]
+    [MaxLength(100)]
     [Column("first_name")]
-    public string FirstName { get; set; }
+    public string FirstName { get; set; } = string.Empty;
 
+    [Required]
+    [MaxLength(100)]
     [Column("last_name")]
-    public string LastName { get; set; }
+    public string LastName { get; set; } = string.Empty;
 
+    [Required]
+    [MaxLength(100)]
     [Column("position")]
-    public string Position { get; set; }
+    public string Position { get; set; } = string.Empty;
+
+    public virtual ICollection<DepositContract> DepositContracts { get; set; } = new List<DepositContract>();
 }

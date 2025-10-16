@@ -32,7 +32,7 @@ public partial class LoginViewModel : ObservableObject
             Window win = result.User.Role switch
             {
                 UserRole.Admin => new AdminWindow(),
-                UserRole.Manager => new RoleWindow("Менеджер"),
+                UserRole.Manager => new ManagerWindow(),
                 UserRole.Operator => new RoleWindow("Операционист"),
                 UserRole.Viewer => new RoleWindow("Наблюдатель"),
                 _ => new RoleWindow("Неизвестно")

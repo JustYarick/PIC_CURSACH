@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using PIC_CURSACH.Model.enums;
 
 namespace PIC_CURSACH.Model.core;
 
@@ -14,29 +15,37 @@ public class FormField : INotifyPropertyChanged
     public bool IsEnabled { get; set; } = true;
     public string PropertyName { get; set; } = string.Empty;
 
+    // Новый: тип поля
+    public FormFieldType FieldType { get; set; } = FormFieldType.Text;
+
+    // Для ComboBox
+    public List<ComboBoxItem>? ComboBoxItems { get; set; }
+
     public string Value
     {
-        get
-        {
-            return _getter?.Invoke() ?? _internalValue;
-        }
+        get => _getter?.Invoke() ?? _internalValue;
         set
         {
             var oldValue = Value;
-
             if (_setter != null)
-            {
                 _setter(value ?? string.Empty);
-            }
             else
-            {
                 _internalValue = value ?? string.Empty;
-            }
 
             if (oldValue != value)
-            {
                 OnPropertyChanged(nameof(Value));
-            }
+        }
+    }
+
+    // Для ComboBox биндинг выбранного значения
+    public string? SelectedComboBoxValue
+    {
+        get => Value;
+        set
+        {
+            if (value != null)
+                Value = value;
+            OnPropertyChanged(nameof(SelectedComboBoxValue));
         }
     }
 
@@ -46,16 +55,9 @@ public class FormField : INotifyPropertyChanged
         _setter = setter ?? throw new ArgumentNullException(nameof(setter));
     }
 
-    public FormField()
-    {
-        _getter = null;
-        _setter = null;
-    }
+    public FormField() { }
 
     public event PropertyChangedEventHandler? PropertyChanged;
-
     protected virtual void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

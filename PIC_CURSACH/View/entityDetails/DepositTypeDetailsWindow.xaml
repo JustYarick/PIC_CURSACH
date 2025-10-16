@@ -1,0 +1,67 @@
+<Window x:Class="PIC_CURSACH.View.entityDetails.DepositTypeDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Информация о типе депозита" Height="500" Width="820"
+        Background="{DynamicResource WindowBackground}" Foreground="White" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Верхняя часть: форма о типе депозита -->
+        <Border Grid.Row="0" Padding="22">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="ID типа депозита: " FontWeight="Bold" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding TypeId}" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Название: " FontWeight="Bold" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Name}" />
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Процентная ставка: " FontWeight="Bold" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding InterestRate}" />
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Минимальная сумма: " FontWeight="Bold" />
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding MinAmount}" />
+
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Срок (дней): " FontWeight="Bold" />
+                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding TermDays}" />
+            </Grid>
+        </Border>
+
+        <!-- Разделитель -->
+        <Separator Grid.Row="1" Margin="0,14,0,14" Background="#444" />
+
+        <!-- Таблица депозитных договоров данного типа -->
+        <Border Grid.Row="2" CornerRadius="8" Padding="14">
+            <StackPanel>
+                <TextBlock Text="Депозитные договоры этого типа" FontSize="17" FontWeight="Bold" Margin="0,0,0,7"/>
+                <DataGrid ItemsSource="{Binding DepositContracts}" AutoGenerateColumns="False" IsReadOnly="True"
+                          Foreground="White"
+                          HeadersVisibility="Column" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding ContractId}" Width="60"/>
+                        <DataGridTextColumn Header="Клиент" Binding="{Binding Client.FirstName}" Width="150"/>
+                        <DataGridTextColumn Header="Сумма" Binding="{Binding Amount, StringFormat=N2}" Width="110"/>
+                        <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate, StringFormat=d}" Width="120"/>
+                        <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate, StringFormat=d}" Width="120"/>
+                        <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="90"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

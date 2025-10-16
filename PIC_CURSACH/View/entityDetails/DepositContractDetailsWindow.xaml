@@ -1,0 +1,83 @@
+<Window x:Class="PIC_CURSACH.View.entityDetails.DepositContractDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Информация о депозитном договоре" Height="650" Width="900"
+        Background="{DynamicResource WindowBackground}" Foreground="White" WindowStartupLocation="CenterScreen">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Основная информация о договоре + вложенные сущности -->
+            <Border Grid.Row="0" Padding="22" CornerRadius="8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="ID договора:" FontWeight="Bold" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ContractId}" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Сумма:" FontWeight="Bold" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Amount, StringFormat=N2}" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Дата начала:" FontWeight="Bold" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding StartDate, StringFormat=d}" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Дата окончания:" FontWeight="Bold" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding EndDate, StringFormat=d}" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Статус:" FontWeight="Bold" />
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Status}" />
+
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Клиент:" FontWeight="Bold" />
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding ClientDisplay}" />
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Сотрудник:" FontWeight="Bold" />
+                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding EmployeeDisplay}" />
+
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Филиал:" FontWeight="Bold" />
+                    <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding BranchDisplay}" />
+
+                    <TextBlock Grid.Row="8" Grid.Column="0" Text="Тип депозита:" FontWeight="Bold" />
+                    <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding DepositTypeDisplay}" />
+                </Grid>
+            </Border>
+
+            <!-- Разделитель -->
+            <Separator Grid.Row="1" Margin="0,14,0,14" Background="#444" />
+
+            <!-- Таблица DepositOperations -->
+            <Border Grid.Row="2" CornerRadius="8" Padding="14">
+                <StackPanel>
+                    <TextBlock Text="Операции по депозиту" FontSize="17" FontWeight="Bold" Margin="0,0,0,7"/>
+                    <DataGrid ItemsSource="{Binding DepositOperations}" AutoGenerateColumns="False" IsReadOnly="True"
+                              Foreground="White"
+                              HeadersVisibility="Column" BorderThickness="0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding OperationId}" Width="60"/>
+                            <DataGridTextColumn Header="Тип операции" Binding="{Binding OperationType}" Width="120"/>
+                            <DataGridTextColumn Header="Сумма" Binding="{Binding Amount, StringFormat=N2}" Width="100"/>
+                            <DataGridTextColumn Header="Дата" Binding="{Binding OperationDate, StringFormat=g}" Width="140"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</Window>

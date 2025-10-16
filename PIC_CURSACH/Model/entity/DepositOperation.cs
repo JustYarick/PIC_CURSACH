@@ -22,8 +22,8 @@ public class DepositOperation
     public decimal Amount { get; set; }
 
     [Column("operation_date")]
-    public DateTime OperationDate { get; set; } = DateTime.Now;
+    public DateTime OperationDate { get; set; }
 
     [ForeignKey("ContractId")]
-    public DepositContract DepositContract { get; set; } = null!;
+    public virtual DepositContract DepositContract { get; set; } = null!;
 }

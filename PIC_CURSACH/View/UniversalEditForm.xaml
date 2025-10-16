@@ -4,6 +4,7 @@
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:local="clr-namespace:PIC_CURSACH.View"
         xmlns:utils="clr-namespace:PIC_CURSACH.utils"
+        xmlns:core="clr-namespace:PIC_CURSACH.Model.core"
         xmlns:viewModel="clr-namespace:PIC_CURSACH.ViewModel"
         Title="{Binding WindowTitle}"
         Height="570" Width="700"
@@ -11,10 +12,74 @@
         WindowStartupLocation="CenterOwner">
     <Window.Resources>
         <utils:BoolToRequiredMarkConverter x:Key="BoolToRequiredMarkConverter"/>
+        <utils:StringToDateConverter x:Key="StringToDateConverter"/>
+
+        <!-- Template для текстового поля -->
+        <DataTemplate x:Key="TextFieldTemplate">
+            <StackPanel Margin="0,0,0,15">
+                <ui:TextBlock FontWeight="SemiBold" Margin="0,0,0,5"
+                              Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+                    <ui:TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}{1}">
+                            <Binding Path="Label"/>
+                            <Binding Path="IsRequired" Converter="{StaticResource BoolToRequiredMarkConverter}"/>
+                        </MultiBinding>
+                    </ui:TextBlock.Text>
+                </ui:TextBlock>
+                <ui:TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+                            PlaceholderText="{Binding Placeholder}"
+                            IsEnabled="{Binding IsEnabled}"
+                            MinWidth="200"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Template для ComboBox -->
+        <DataTemplate x:Key="ComboBoxFieldTemplate">
+            <StackPanel Margin="0,0,0,15">
+                <ui:TextBlock FontWeight="SemiBold" Margin="0,0,0,5"
+                              Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+                    <ui:TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}{1}">
+                            <Binding Path="Label"/>
+                            <Binding Path="IsRequired" Converter="{StaticResource BoolToRequiredMarkConverter}"/>
+                        </MultiBinding>
+                    </ui:TextBlock.Text>
+                </ui:TextBlock>
+                <ComboBox ItemsSource="{Binding ComboBoxItems}"
+                          SelectedValue="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedValuePath="Value"
+                          DisplayMemberPath="DisplayName"
+                          IsEnabled="{Binding IsEnabled}"
+                          MinWidth="200"
+                          Height="36"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Template для DatePicker -->
+        <DataTemplate x:Key="DatePickerFieldTemplate">
+            <StackPanel Margin="0,0,0,15">
+                <ui:TextBlock FontWeight="SemiBold" Margin="0,0,0,5"
+                              Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+                    <ui:TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}{1}">
+                            <Binding Path="Label"/>
+                            <Binding Path="IsRequired" Converter="{StaticResource BoolToRequiredMarkConverter}"/>
+                        </MultiBinding>
+                    </ui:TextBlock.Text>
+                </ui:TextBlock>
+                <DatePicker SelectedDate="{Binding Value, Converter={StaticResource StringToDateConverter}, UpdateSourceTrigger=PropertyChanged}"
+                            IsEnabled="{Binding IsEnabled}"
+                            MinWidth="200"
+                            Height="36"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- DataTemplateSelector -->
+        <utils:FormFieldTemplateSelector x:Key="FormFieldTemplateSelector"
+                                          TextFieldTemplate="{StaticResource TextFieldTemplate}"
+                                          ComboBoxFieldTemplate="{StaticResource ComboBoxFieldTemplate}"
+                                          DatePickerFieldTemplate="{StaticResource DatePickerFieldTemplate}"/>
     </Window.Resources>
-    <Window.DataContext>
-        <viewModel:AdminViewModel/>
-    </Window.DataContext>
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -31,34 +96,13 @@
                       Margin="0,0,0,20"/>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding Fields}">
+            <ItemsControl ItemsSource="{Binding Fields}"
+                          ItemTemplateSelector="{StaticResource FormFieldTemplateSelector}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Vertical" Margin="0"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="0,0,0,15">
-                            <!-- Лейбл поля -->
-                            <ui:TextBlock FontWeight="SemiBold" Margin="0,0,0,5"
-                                          Foreground="{DynamicResource TextFillColorPrimaryBrush}">
-                                <ui:TextBlock.Text>
-                                    <MultiBinding StringFormat="{}{0}{1}">
-                                        <Binding Path="Label"/>
-                                        <Binding Path="IsRequired" Converter="{StaticResource BoolToRequiredMarkConverter}"/>
-                                    </MultiBinding>
-                                </ui:TextBlock.Text>
-                            </ui:TextBlock>
-
-                            <!-- Поле ввода -->
-                            <ui:TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
-                                        PlaceholderText="{Binding Placeholder}"
-                                        IsEnabled="{Binding IsEnabled}"
-                                        MinWidth="200"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
 

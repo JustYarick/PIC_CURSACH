@@ -5,8 +5,10 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using PIC_CURSACH.Model.core;
 using PIC_CURSACH.Model.entity;
+using PIC_CURSACH.Model.enums;
 using PIC_CURSACH.Service.Interfaces;
 using PIC_CURSACH.View;
+using PIC_CURSACH.View.entityDetails;
 
 namespace PIC_CURSACH.ViewModel;
 
@@ -122,41 +124,42 @@ public partial class AdminViewModel : ObservableObject
             await LoadClients();
     }
 
-    [RelayCommand]
-    private async Task ShowAddDepositOperationForm()
+    [RelayCommand] private async Task ShowAddDepositOperationForm()
     {
         var fields = new List<FormField>
         {
-            new() { Label = "ID договора", Placeholder = "Введите ID договора", IsRequired = true, PropertyName = "ContractId" },
-            new() { Label = "Тип операции", Placeholder = "Введите тип операции", IsRequired = true, PropertyName = "OperationType" },
-            new() { Label = "Сумма", Placeholder = "Введите сумму", IsRequired = true, PropertyName = "Amount" },
-            new() { Label = "Дата операции", Placeholder = "Введите дату", IsRequired = true, PropertyName = "OperationDate" }
+            new()
+            {
+                Label = "Договор",
+                PropertyName = "ContractId",
+                FieldType = FormFieldType.ComboBox,
+                IsRequired = true,
+                ComboBoxItems = DepositContracts.Select(c => new ComboBoxItem { DisplayName = c.ContractId.ToString(), Value = c.ContractId.ToString() }).ToList()
+            },
+            new() { Label = "Тип операции", PropertyName = "OperationType", FieldType = FormFieldType.Text, IsRequired = true },
+            new() { Label = "Сумма", PropertyName = "Amount", FieldType = FormFieldType.Text, IsRequired = true },
+            new() { Label = "Дата", PropertyName = "OperationDate", FieldType = FormFieldType.DatePicker, IsRequired = true }
         };
-
         var form = new UniversalEditForm();
-        var viewModel = new UniversalEditFormViewModel(form, "Добавление операции по депозиту", "Добавить", fields, SaveNewDepositOperationAsync);
-        form.DataContext = viewModel;
-
-        if (form.ShowDialog() == true && viewModel.DialogResult)
+        var vm = new UniversalEditFormViewModel(form, "Добавить операцию", "Добавить", fields, SaveNewDepositOperationAsync);
+        form.DataContext = vm;
+        if (form.ShowDialog() == true && vm.DialogResult)
             await LoadDepositOperations();
     }
 
-    [RelayCommand]
-    private async Task ShowAddDepositTypeForm()
+    [RelayCommand] private async Task ShowAddDepositTypeForm()
     {
         var fields = new List<FormField>
         {
-            new() { Label = "Название", Placeholder = "Введите название типа", IsRequired = true, PropertyName = "Name" },
-            new() { Label = "Процент", Placeholder = "Введите процент", IsRequired = true, PropertyName = "InterestRate" },
-            new() { Label = "Минимальная сумма", Placeholder = "Введите минимум", IsRequired = true, PropertyName = "MinAmount" },
-            new() { Label = "Срок (дней)", Placeholder = "Введите срок", IsRequired = true, PropertyName = "TermDays" }
+            new() { Label = "Название", PropertyName = "Name", FieldType = FormFieldType.Text, IsRequired = true },
+            new() { Label = "Процент", PropertyName = "InterestRate", FieldType = FormFieldType.Text, IsRequired = true },
+            new() { Label = "Мин. сумма", PropertyName = "MinAmount", FieldType = FormFieldType.Text, IsRequired = true },
+            new() { Label = "Срок (дней)", PropertyName = "TermDays", FieldType = FormFieldType.Text, IsRequired = true }
         };
-
         var form = new UniversalEditForm();
-        var viewModel = new UniversalEditFormViewModel(form, "Добавление типа депозита", "Добавить", fields, SaveNewDepositTypeAsync);
-        form.DataContext = viewModel;
-
-        if (form.ShowDialog() == true && viewModel.DialogResult)
+        var vm = new UniversalEditFormViewModel(form, "Добавить тип депозита", "Добавить", fields, SaveNewDepositTypeAsync);
+        form.DataContext = vm;
+        if (form.ShowDialog() == true && vm.DialogResult)
             await LoadDepositTypes();
     }
 
@@ -178,48 +181,78 @@ public partial class AdminViewModel : ObservableObject
             await LoadEmployees();
     }
 
-    [RelayCommand]
-    private async Task ShowAddDepositContractForm()
+    [RelayCommand] private async Task ShowAddDepositContractForm()
     {
         var fields = new List<FormField>
         {
-            new() { Label = "ID клиента", Placeholder = "Введите ID клиента", IsRequired = true, PropertyName = "ClientId" },
-            new() { Label = "ID типа депозита", Placeholder = "Введите ID типа депозита", IsRequired = true, PropertyName = "TypeId" },
-            new() { Label = "ID сотрудника", Placeholder = "Введите ID сотрудника", IsRequired = true, PropertyName = "EmployeeId" },
-            new() { Label = "ID филиала", Placeholder = "Введите ID филиала", IsRequired = true, PropertyName = "BranchId" },
-            new() { Label = "Сумма", Placeholder = "Введите сумму", IsRequired = true, PropertyName = "Amount" },
-            new() { Label = "Дата начала", Placeholder = "Введите дату начала", IsRequired = true, PropertyName = "StartDate" },
-            new() { Label = "Дата окончания", Placeholder = "Введите дату окончания", IsRequired = true, PropertyName = "EndDate" },
-            new() { Label = "Статус", Placeholder = "Введите статус", PropertyName = "Status", Value = "ACTIVE" }
+            new()
+            {
+                Label = "Клиент",
+                PropertyName = "ClientId",
+                FieldType = FormFieldType.ComboBox,
+                IsRequired = true,
+                ComboBoxItems = Clients.Select(c => new ComboBoxItem { DisplayName = $"{c.FirstName} {c.LastName}", Value = c.ClientId.ToString() }).ToList()
+            },
+            new()
+            {
+                Label = "Тип депозита",
+                PropertyName = "TypeId",
+                FieldType = FormFieldType.ComboBox,
+                IsRequired = true,
+                ComboBoxItems = DepositTypes.Select(t => new ComboBoxItem { DisplayName = t.Name, Value = t.TypeId.ToString() }).ToList()
+            },
+            new()
+            {
+                Label = "Сотрудник",
+                PropertyName = "EmployeeId",
+                FieldType = FormFieldType.ComboBox,
+                IsRequired = true,
+                ComboBoxItems = Employees.Select(e => new ComboBoxItem { DisplayName = $"{e.FirstName} {e.LastName}", Value = e.EmployeeId.ToString() }).ToList()
+            },
+            new()
+            {
+                Label = "Филиал",
+                PropertyName = "BranchId",
+                FieldType = FormFieldType.ComboBox,
+                IsRequired = true,
+                ComboBoxItems = (await App.CurrentServiceConfigurator.Services.GetRequiredService<IBranchService>().GetAllAsync())
+                    .Select(b => new ComboBoxItem { DisplayName = b.Name, Value = b.BranchId.ToString() }).ToList()
+            },
+            new() { Label = "Сумма", PropertyName = "Amount", FieldType = FormFieldType.Text, IsRequired = true },
+            new() { Label = "Дата начала", PropertyName = "StartDate", FieldType = FormFieldType.DatePicker, IsRequired = true },
+            new() { Label = "Дата окончания", PropertyName = "EndDate", FieldType = FormFieldType.DatePicker, IsRequired = true },
+            new() { Label = "Статус", PropertyName = "Status", FieldType = FormFieldType.Text, Value = "ACTIVE" }
         };
-
         var form = new UniversalEditForm();
-        var viewModel = new UniversalEditFormViewModel(form, "Добавление договора", "Добавить", fields, SaveNewDepositContractAsync);
-        form.DataContext = viewModel;
-
-        if (form.ShowDialog() == true && viewModel.DialogResult)
+        var vm = new UniversalEditFormViewModel(form, "Добавить договор", "Добавить", fields, SaveNewDepositContractAsync);
+        form.DataContext = vm;
+        if (form.ShowDialog() == true && vm.DialogResult)
             await LoadDepositContracts();
     }
 
-    [RelayCommand]
-    private async Task ShowEditDepositOperationForm()
+    [RelayCommand] private async Task ShowEditDepositOperationForm()
     {
         if (SelectedDepositOperation == null) return;
-
+        var op = SelectedDepositOperation;
         var fields = new List<FormField>
         {
-            new() { Label = "ID договора", PropertyName = "ContractId", Value = SelectedDepositOperation.ContractId.ToString() },
-            new() { Label = "Тип операции", PropertyName = "OperationType", Value = SelectedDepositOperation.OperationType },
-            new() { Label = "Сумма", PropertyName = "Amount", Value = SelectedDepositOperation.Amount.ToString() },
-            new() { Label = "Дата операции", PropertyName = "OperationDate", Value = SelectedDepositOperation.OperationDate.ToString("yyyy-MM-dd HH:mm:ss") }
+            new()
+            {
+                Label = "Договор",
+                PropertyName = "ContractId",
+                FieldType = FormFieldType.ComboBox,
+                ComboBoxItems = DepositContracts.Select(c => new ComboBoxItem { DisplayName = c.ContractId.ToString(), Value = c.ContractId.ToString() }).ToList(),
+                SelectedComboBoxValue = op.ContractId.ToString()
+            },
+            new() { Label = "Тип операции", PropertyName = "OperationType", FieldType = FormFieldType.Text, Value = op.OperationType },
+            new() { Label = "Сумма", PropertyName = "Amount", FieldType = FormFieldType.Text, Value = op.Amount.ToString() },
+            new() { Label = "Дата", PropertyName = "OperationDate", FieldType = FormFieldType.DatePicker, Value = op.OperationDate.ToString("yyyy-MM-dd") }
         };
-
         var form = new UniversalEditForm();
-        var viewModel = new UniversalEditFormViewModel(form, "Редактирование операции по депозиту", "Сохранить", fields,
-            values => SaveExistingDepositOperationAsync(SelectedDepositOperation.OperationId, values));
-        form.DataContext = viewModel;
-
-        if (form.ShowDialog() == true && viewModel.DialogResult)
+        var vm = new UniversalEditFormViewModel(form, "Редактировать операцию", "Сохранить", fields,
+            values => SaveExistingDepositOperationAsync(op.OperationId, values));
+        form.DataContext = vm;
+        if (form.ShowDialog() == true && vm.DialogResult)
             await LoadDepositOperations();
     }
 
@@ -227,21 +260,19 @@ public partial class AdminViewModel : ObservableObject
     private async Task ShowEditDepositTypeForm()
     {
         if (SelectedDepositType == null) return;
-
+        var dt = SelectedDepositType;
         var fields = new List<FormField>
         {
-            new() { Label = "Название", PropertyName = "Name", Value = SelectedDepositType.Name },
-            new() { Label = "Процент", PropertyName = "InterestRate", Value = SelectedDepositType.InterestRate.ToString() },
-            new() { Label = "Мин. сумма", PropertyName = "MinAmount", Value = SelectedDepositType.MinAmount.ToString() },
-            new() { Label = "Срок (дней)", PropertyName = "TermDays", Value = SelectedDepositType.TermDays.ToString() }
+            new() { Label = "Название", PropertyName = "Name", FieldType = FormFieldType.Text, Value = dt.Name },
+            new() { Label = "Процент", PropertyName = "InterestRate", FieldType = FormFieldType.Text, Value = dt.InterestRate.ToString() },
+            new() { Label = "Мин. сумма", PropertyName = "MinAmount", FieldType = FormFieldType.Text, Value = dt.MinAmount.ToString() },
+            new() { Label = "Срок (дней)", PropertyName = "TermDays", FieldType = FormFieldType.Text, Value = dt.TermDays.ToString() }
         };
-
         var form = new UniversalEditForm();
-        var viewModel = new UniversalEditFormViewModel(form, "Редактирование типа депозита", "Сохранить", fields,
-            values => SaveExistingDepositTypeAsync(SelectedDepositType.TypeId, values));
-        form.DataContext = viewModel;
-
-        if (form.ShowDialog() == true && viewModel.DialogResult)
+        var vm = new UniversalEditFormViewModel(form, "Редактировать тип депозита", "Сохранить", fields,
+            values => SaveExistingDepositTypeAsync(dt.TypeId, values));
+        form.DataContext = vm;
+        if (form.ShowDialog() == true && vm.DialogResult)
             await LoadDepositTypes();
     }
 
@@ -273,25 +304,52 @@ public partial class AdminViewModel : ObservableObject
     private async Task ShowEditDepositContractForm()
     {
         if (SelectedDepositContract == null) return;
-
+        var dc = SelectedDepositContract;
         var fields = new List<FormField>
         {
-            new() { Label = "ID клиента", IsRequired = true, PropertyName = "ClientId", Value = SelectedDepositContract.ClientId.ToString() },
-            new() { Label = "ID типа депозита", IsRequired = true, PropertyName = "TypeId", Value = SelectedDepositContract.TypeId.ToString() },
-            new() { Label = "ID сотрудника", IsRequired = true, PropertyName = "EmployeeId", Value = SelectedDepositContract.EmployeeId.ToString() },
-            new() { Label = "ID филиала", IsRequired = true, PropertyName = "BranchId", Value = SelectedDepositContract.BranchId.ToString() },
-            new() { Label = "Сумма", IsRequired = true, PropertyName = "Amount", Value = SelectedDepositContract.Amount.ToString() },
-            new() { Label = "Дата начала", IsRequired = true, PropertyName = "StartDate", Value = SelectedDepositContract.StartDate.ToString("yyyy-MM-dd") },
-            new() { Label = "Дата окончания", IsRequired = true, PropertyName = "EndDate", Value = SelectedDepositContract.EndDate.ToString("yyyy-MM-dd") },
-            new() { Label = "Статус", PropertyName = "Status", Value = SelectedDepositContract.Status }
+            new()
+            {
+                Label = "Клиент",
+                PropertyName = "ClientId",
+                FieldType = FormFieldType.ComboBox,
+                ComboBoxItems = Clients.Select(c => new ComboBoxItem { DisplayName = $"{c.FirstName} {c.LastName}", Value = c.ClientId.ToString() }).ToList(),
+                SelectedComboBoxValue = dc.ClientId.ToString()
+            },
+            new()
+            {
+                Label = "Тип депозита",
+                PropertyName = "TypeId",
+                FieldType = FormFieldType.ComboBox,
+                ComboBoxItems = DepositTypes.Select(t => new ComboBoxItem { DisplayName = t.Name, Value = t.TypeId.ToString() }).ToList(),
+                SelectedComboBoxValue = dc.TypeId.ToString()
+            },
+            new()
+            {
+                Label = "Сотрудник",
+                PropertyName = "EmployeeId",
+                FieldType = FormFieldType.ComboBox,
+                ComboBoxItems = Employees.Select(e => new ComboBoxItem { DisplayName = $"{e.FirstName} {e.LastName}", Value = e.EmployeeId.ToString() }).ToList(),
+                SelectedComboBoxValue = dc.EmployeeId.ToString()
+            },
+            new()
+            {
+                Label = "Филиал",
+                PropertyName = "BranchId",
+                FieldType = FormFieldType.ComboBox,
+                ComboBoxItems = (await App.CurrentServiceConfigurator.Services.GetRequiredService<IBranchService>().GetAllAsync())
+                    .Select(b => new ComboBoxItem { DisplayName = b.Name, Value = b.BranchId.ToString() }).ToList(),
+                SelectedComboBoxValue = dc.BranchId.ToString()
+            },
+            new() { Label = "Сумма", PropertyName = "Amount", FieldType = FormFieldType.Text, Value = dc.Amount.ToString() },
+            new() { Label = "Дата начала", PropertyName = "StartDate", FieldType = FormFieldType.DatePicker, Value = dc.StartDate.ToString("yyyy-MM-dd") },
+            new() { Label = "Дата окончания", PropertyName = "EndDate", FieldType = FormFieldType.DatePicker, Value = dc.EndDate.ToString("yyyy-MM-dd") },
+            new() { Label = "Статус", PropertyName = "Status", FieldType = FormFieldType.Text, Value = dc.Status }
         };
-
         var form = new UniversalEditForm();
-        var viewModel = new UniversalEditFormViewModel(form, "Редактирование договора", "Сохранить", fields,
-            values => SaveExistingDepositContractAsync(SelectedDepositContract.ContractId, values));
-        form.DataContext = viewModel;
-
-        if (form.ShowDialog() == true && viewModel.DialogResult)
+        var vm = new UniversalEditFormViewModel(form, "Редактировать договор", "Сохранить", fields,
+            values => SaveExistingDepositContractAsync(dc.ContractId, values));
+        form.DataContext = vm;
+        if (form.ShowDialog() == true && vm.DialogResult)
             await LoadDepositContracts();
     }
 
@@ -327,7 +385,7 @@ public partial class AdminViewModel : ObservableObject
         if (result == MessageBoxResult.Yes)
         {
             await _clientService.DeleteAsync(SelectedClient.ClientId);
-            await LoadClients();
+            Clients.Remove(SelectedClient);
             MessageBox.Show("Клиент успешно удален!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
@@ -337,13 +395,11 @@ public partial class AdminViewModel : ObservableObject
     {
         if (SelectedDepositOperation == null) return;
 
-        var result = MessageBox.Show($"Удалить операцию с ID {SelectedDepositOperation.OperationId}?",
-            "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
+        var result = MessageBox.Show($"Удалить операцию {SelectedDepositOperation.OperationId}?", "Подтвердить", MessageBoxButton.YesNo);
         if (result == MessageBoxResult.Yes)
         {
             await _depositOperationService.DeleteAsync(SelectedDepositOperation.OperationId);
-            await LoadDepositOperations();
+            DepositOperations.Remove(SelectedDepositOperation);
             MessageBox.Show("Операция удалена.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
@@ -353,13 +409,11 @@ public partial class AdminViewModel : ObservableObject
     {
         if (SelectedDepositType == null) return;
 
-        var result = MessageBox.Show($"Удалить тип депозита {SelectedDepositType.Name}?",
-            "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
+        var result = MessageBox.Show($"Удалить тип {SelectedDepositType.Name}?", "Подтвердить", MessageBoxButton.YesNo);
         if (result == MessageBoxResult.Yes)
         {
             await _depositTypeService.DeleteAsync(SelectedDepositType.TypeId);
-            await LoadDepositTypes();
+            DepositTypes.Remove(SelectedDepositType);
             MessageBox.Show("Тип депозита удален.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
@@ -375,7 +429,7 @@ public partial class AdminViewModel : ObservableObject
         if (result == MessageBoxResult.Yes)
         {
             await _employeeService.DeleteAsync(SelectedEmployee.EmployeeId);
-            await LoadEmployees();
+            Employees.Remove(SelectedEmployee);
             MessageBox.Show("Сотрудник успешно удален!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
@@ -385,13 +439,13 @@ public partial class AdminViewModel : ObservableObject
     {
         if (SelectedDepositContract == null) return;
 
-        var result = MessageBox.Show($"Удалить депозитный договор {SelectedDepositContract.ContractId}?",
+        var result = MessageBox.Show($"Удалить договор {SelectedDepositContract.ContractId}?",
             "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
         if (result == MessageBoxResult.Yes)
         {
             await _depositContractService.DeleteAsync(SelectedDepositContract.ContractId);
-            await LoadDepositContracts();
+            DepositContracts.Remove(SelectedDepositContract);
             MessageBox.Show("Договор успешно удален!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
@@ -401,7 +455,6 @@ public partial class AdminViewModel : ObservableObject
     {
         try
         {
-            // Проверка уникальности паспорта
             var exists = await _clientService.ExistsByPassportAsync(values["Passport"]);
             if (exists)
             {
@@ -420,14 +473,14 @@ public partial class AdminViewModel : ObservableObject
             };
 
             await _clientService.AddAsync(client);
+            Clients.Add(client);
             MessageBox.Show("Клиент успешно добавлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-            await LoadClients();
             return true;
         }
         catch (Exception ex)
         {
             var err = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-            MessageBox.Show($"Ошибка при добавлении операции: {err}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Ошибка при добавлении клиента: {err}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }
     }
@@ -436,22 +489,21 @@ public partial class AdminViewModel : ObservableObject
     {
         try
         {
-            var operation = new DepositOperation
+            var op = new DepositOperation
             {
                 ContractId = int.Parse(values["ContractId"]),
                 OperationType = values["OperationType"],
                 Amount = decimal.Parse(values["Amount"]),
-                OperationDate = DateTime.Parse(values["OperationDate"])
+                OperationDate = DateTime.SpecifyKind(DateTime.Parse(values["OperationDate"]), DateTimeKind.Utc)
             };
-            await _depositOperationService.AddAsync(operation);
+            await _depositOperationService.AddAsync(op);
+            DepositOperations.Add(op);
             MessageBox.Show("Операция успешно добавлена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-            await LoadDepositOperations();
             return true;
         }
         catch (Exception ex)
         {
-            var err = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-            MessageBox.Show($"Ошибка при добавлении операции: {err}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(ex.InnerException?.Message ?? ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }
     }
@@ -460,22 +512,21 @@ public partial class AdminViewModel : ObservableObject
     {
         try
         {
-            var depositType = new DepositType
+            var dt = new DepositType
             {
                 Name = values["Name"],
                 InterestRate = decimal.Parse(values["InterestRate"]),
                 MinAmount = decimal.Parse(values["MinAmount"]),
                 TermDays = int.Parse(values["TermDays"])
             };
-            await _depositTypeService.AddAsync(depositType);
+            await _depositTypeService.AddAsync(dt);
+            DepositTypes.Add(dt);
             MessageBox.Show("Тип депозита успешно добавлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-            await LoadDepositTypes();
             return true;
         }
         catch (Exception ex)
         {
-            var err = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-            MessageBox.Show($"Ошибка при добавлении операции: {err}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(ex.InnerException?.Message ?? ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }
     }
@@ -492,14 +543,13 @@ public partial class AdminViewModel : ObservableObject
             };
 
             await _employeeService.AddAsync(employee);
+            Employees.Add(employee);
             MessageBox.Show("Сотрудник успешно добавлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-            await LoadEmployees();
             return true;
         }
         catch (Exception ex)
         {
-            var err = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-            MessageBox.Show($"Ошибка при добавлении операции: {err}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(ex.InnerException?.Message ?? ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }
     }
@@ -508,27 +558,25 @@ public partial class AdminViewModel : ObservableObject
     {
         try
         {
-            var contract = new DepositContract
+            var dc = new DepositContract
             {
                 ClientId = int.Parse(values["ClientId"]),
                 TypeId = int.Parse(values["TypeId"]),
                 EmployeeId = int.Parse(values["EmployeeId"]),
                 BranchId = int.Parse(values["BranchId"]),
                 Amount = decimal.Parse(values["Amount"]),
-                StartDate = DateTime.Parse(values["StartDate"]),
-                EndDate = DateTime.Parse(values["EndDate"]),
-                Status = values.ContainsKey("Status") ? values["Status"] : "ACTIVE"
+                StartDate = DateTime.SpecifyKind(DateTime.Parse(values["StartDate"]), DateTimeKind.Utc),
+                EndDate = DateTime.SpecifyKind(DateTime.Parse(values["EndDate"]), DateTimeKind.Utc),
+                Status = values["Status"]
             };
-
-            await _depositContractService.AddAsync(contract);
+            await _depositContractService.AddAsync(dc);
+            DepositContracts.Add(dc);
             MessageBox.Show("Договор успешно добавлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-            await LoadDepositContracts();
             return true;
         }
         catch (Exception ex)
         {
-            var err = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-            MessageBox.Show($"Ошибка при добавлении операции: {err}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(ex.InnerException?.Message ?? ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }
     }
@@ -547,50 +595,43 @@ public partial class AdminViewModel : ObservableObject
 
             client.FirstName = values["FirstName"];
             client.LastName = values["LastName"];
-            // Паспорт не обновляем - он заблокирован при редактировании
             client.Phone = string.IsNullOrEmpty(values.GetValueOrDefault("Phone")) ? null : values["Phone"];
             client.Email = string.IsNullOrEmpty(values.GetValueOrDefault("Email")) ? null : values["Email"];
 
             await _clientService.UpdateAsync(client);
             MessageBox.Show("Клиент успешно обновлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            // Обновляем в коллекции (вызывается PropertyChanged у объекта)
             return true;
         }
         catch (Exception ex)
         {
-            var err = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-            MessageBox.Show($"Ошибка при добавлении операции: {err}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(ex.InnerException?.Message ?? ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }
     }
 
-    private async Task<bool> SaveExistingDepositContractAsync(int contractId, Dictionary<string, string> values)
+    private async Task<bool> SaveExistingDepositContractAsync(int id, Dictionary<string, string> values)
     {
         try
         {
-            var contract = await _depositContractService.GetByIdAsync(contractId);
-            if (contract == null)
-            {
-                MessageBox.Show("Договор не найден!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
-
-            contract.ClientId = int.Parse(values["ClientId"]);
-            contract.TypeId = int.Parse(values["TypeId"]);
-            contract.EmployeeId = int.Parse(values["EmployeeId"]);
-            contract.BranchId = int.Parse(values["BranchId"]);
-            contract.Amount = decimal.Parse(values["Amount"]);
-            contract.StartDate = DateTime.Parse(values["StartDate"]);
-            contract.EndDate = DateTime.Parse(values["EndDate"]);
-            contract.Status = values.ContainsKey("Status") ? values["Status"] : contract.Status;
-
-            await _depositContractService.UpdateAsync(contract);
+            var dc = await _depositContractService.GetByIdAsync(id);
+            if (dc == null) return false;
+            dc.ClientId = int.Parse(values["ClientId"]);
+            dc.TypeId = int.Parse(values["TypeId"]);
+            dc.EmployeeId = int.Parse(values["EmployeeId"]);
+            dc.BranchId = int.Parse(values["BranchId"]);
+            dc.Amount = decimal.Parse(values["Amount"]);
+            dc.StartDate = DateTime.SpecifyKind(DateTime.Parse(values["StartDate"]), DateTimeKind.Utc);
+            dc.EndDate = DateTime.SpecifyKind(DateTime.Parse(values["EndDate"]), DateTimeKind.Utc);
+            dc.Status = values["Status"];
+            await _depositContractService.UpdateAsync(dc);
             MessageBox.Show("Договор успешно обновлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            // Обновление коллекции произойдет автоматически если объект уведомляет об изменениях
             return true;
         }
         catch (Exception ex)
         {
-            var err = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-            MessageBox.Show($"Ошибка при добавлении операции: {err}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(ex.InnerException?.Message ?? ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }
     }
@@ -616,64 +657,98 @@ public partial class AdminViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            var err = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-            MessageBox.Show($"Ошибка при добавлении операции: {err}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(ex.InnerException?.Message ?? ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }
     }
 
-    private async Task<bool> SaveExistingDepositOperationAsync(int operationId, Dictionary<string, string> values)
+    private async Task<bool> SaveExistingDepositOperationAsync(int id, Dictionary<string, string> values)
     {
         try
         {
-            var operation = await _depositOperationService.GetByIdAsync(operationId);
-            if (operation == null)
-            {
-                MessageBox.Show("Операция не найдена!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
-            operation.ContractId = int.Parse(values["ContractId"]);
-            operation.OperationType = values["OperationType"];
-            operation.Amount = decimal.Parse(values["Amount"]);
-            operation.OperationDate = DateTime.Parse(values["OperationDate"]);
-
-            await _depositOperationService.UpdateAsync(operation);
+            var op = await _depositOperationService.GetByIdAsync(id);
+            if (op == null) return false;
+            op.ContractId = int.Parse(values["ContractId"]);
+            op.OperationType = values["OperationType"];
+            op.Amount = decimal.Parse(values["Amount"]);
+            op.OperationDate = DateTime.SpecifyKind(DateTime.Parse(values["OperationDate"]), DateTimeKind.Utc);
+            await _depositOperationService.UpdateAsync(op);
             MessageBox.Show("Операция успешно обновлена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             return true;
         }
         catch (Exception ex)
         {
-            var err = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-            MessageBox.Show($"Ошибка при добавлении операции: {err}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(ex.InnerException?.Message ?? ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }
     }
 
-    private async Task<bool> SaveExistingDepositTypeAsync(int typeId, Dictionary<string, string> values)
+    private async Task<bool> SaveExistingDepositTypeAsync(int id, Dictionary<string, string> values)
     {
         try
         {
-            var depositType = await _depositTypeService.GetByIdAsync(typeId);
-            if (depositType == null)
-            {
-                MessageBox.Show("Тип депозита не найден!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
-
-            depositType.Name = values["Name"];
-            depositType.InterestRate = decimal.Parse(values["InterestRate"]);
-            depositType.MinAmount = decimal.Parse(values["MinAmount"]);
-            depositType.TermDays = int.Parse(values["TermDays"]);
-
-            await _depositTypeService.UpdateAsync(depositType);
+            var dt = await _depositTypeService.GetByIdAsync(id);
+            if (dt == null) return false;
+            dt.Name = values["Name"];
+            dt.InterestRate = decimal.Parse(values["InterestRate"]);
+            dt.MinAmount = decimal.Parse(values["MinAmount"]);
+            dt.TermDays = int.Parse(values["TermDays"]);
+            await _depositTypeService.UpdateAsync(dt);
             MessageBox.Show("Тип депозита успешно обновлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             return true;
         }
         catch (Exception ex)
         {
-            var err = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-            MessageBox.Show($"Ошибка при добавлении операции: {err}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(ex.InnerException?.Message ?? ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }
+    }
+
+    public void OpenClientDetails()
+    {
+        if (SelectedClient == null)
+            return;
+
+        var detailsWindow = new ClientDetailsWindow
+        {
+            DataContext = SelectedClient
+        };
+        detailsWindow.ShowDialog();
+    }
+
+    public void OpenEmployeeDetails()
+    {
+        if (SelectedEmployee == null)
+            return;
+
+        var detailsWindow = new EmployeeDetailsWindow()
+        {
+            DataContext = SelectedEmployee
+        };
+        detailsWindow.ShowDialog();
+    }
+
+    public void OpenDepositTypeDetails()
+    {
+        if (SelectedDepositType == null)
+            return;
+
+        var detailsWindow = new DepositTypeDetailsWindow()
+        {
+            DataContext = SelectedDepositType
+        };
+        detailsWindow.ShowDialog();
+    }
+
+    public void OpenDepositContractDetails()
+    {
+        if (SelectedDepositContract == null)
+            return;
+
+        var detailsWindow = new DepositContractDetailsWindow()
+        {
+            DataContext = SelectedDepositContract
+        };
+        detailsWindow.ShowDialog();
     }
 }
