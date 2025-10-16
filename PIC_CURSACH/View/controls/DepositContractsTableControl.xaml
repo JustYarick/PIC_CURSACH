@@ -1,0 +1,29 @@
+<UserControl x:Class="PIC_CURSACH.View.controls.DepositContractsTableControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:PIC_CURSACH.View.controls"
+             Loaded="OnLoaded">
+    <controls:EntityTableControl
+        ItemsSource="{Binding DepositContracts}"
+        SelectedItem="{Binding SelectedDepositContract, Mode=TwoWay}"
+        AddCommand="{Binding ShowAddFormCommand}"
+        EditCommand="{Binding ShowEditFormCommand}"
+        DeleteCommand="{Binding DeleteDepositContractCommand}"
+        CanAdd="{Binding CanAdd}"
+        CanEdit="{Binding CanEdit}"
+        CanDelete="{Binding CanDelete}"
+        RowDoubleClick="OnRowDoubleClick">
+        <controls:EntityTableControl.Columns>
+            <DataGridTextColumn Header="ID" Binding="{Binding ContractId}"
+                                IsReadOnly="True" Width="60" />
+            <DataGridTextColumn Header="Клиент ID" Binding="{Binding ClientId}" Width="*" />
+            <DataGridTextColumn Header="Тип депозита ID" Binding="{Binding TypeId}" Width="*" />
+            <DataGridTextColumn Header="Сотрудник ID" Binding="{Binding EmployeeId}" Width="*" />
+            <DataGridTextColumn Header="Филиал ID" Binding="{Binding BranchId}" Width="*" />
+            <DataGridTextColumn Header="Сумма" Binding="{Binding Amount}" Width="*" />
+            <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate, StringFormat=d}" Width="*" />
+            <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate, StringFormat=d}" Width="*" />
+            <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="*" />
+        </controls:EntityTableControl.Columns>
+    </controls:EntityTableControl>
+</UserControl>

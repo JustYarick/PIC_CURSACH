@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PIC_CURSACH.Service.Impl;
 using PIC_CURSACH.Service.Interfaces;
 using PIC_CURSACH.ViewModel;
+using PIC_CURSACH.ViewModel.controls;
 
 namespace PIC_CURSACH.Configuration;
 
@@ -45,8 +46,14 @@ public class ServiceConfigurator
         services.AddSingleton<IDepositTypeService, DepositTypeService>();
         services.AddSingleton<IBranchService, BranchService>();
 
+        services.AddTransient<ClientsTableViewModel>();
         services.AddTransient<AdminViewModel>();
         services.AddTransient<ManagerViewModel>();
+        services.AddTransient<EmployeesTableViewModel>();
+        services.AddTransient<DepositOperationsTableViewModel>();
+        services.AddTransient<DepositTypesTableViewModel>();
+        services.AddTransient<DepositContractsTableViewModel>();
+
 
         Services = serviceCollection.BuildServiceProvider();
     }

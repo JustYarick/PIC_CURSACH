@@ -1,0 +1,24 @@
+<UserControl x:Class="PIC_CURSACH.View.controls.DepositOperationsTableControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:PIC_CURSACH.View.controls"
+             Loaded="OnLoaded">
+    <controls:EntityTableControl
+        ItemsSource="{Binding DepositOperations}"
+        SelectedItem="{Binding SelectedDepositOperation, Mode=TwoWay}"
+        AddCommand="{Binding ShowAddFormCommand}"
+        EditCommand="{Binding ShowEditFormCommand}"
+        DeleteCommand="{Binding DeleteDepositOperationCommand}"
+        CanAdd="{Binding CanAdd}"
+        CanEdit="{Binding CanEdit}"
+        CanDelete="{Binding CanDelete}">
+        <controls:EntityTableControl.Columns>
+            <DataGridTextColumn Header="ID" Binding="{Binding OperationId}"
+                                IsReadOnly="True" Width="60" />
+            <DataGridTextColumn Header="Договор" Binding="{Binding ContractId}" Width="*" />
+            <DataGridTextColumn Header="Тип операции" Binding="{Binding OperationType}" Width="*" />
+            <DataGridTextColumn Header="Сумма" Binding="{Binding Amount}" Width="*" />
+            <DataGridTextColumn Header="Дата" Binding="{Binding OperationDate, StringFormat=d}" Width="*" />
+        </controls:EntityTableControl.Columns>
+    </controls:EntityTableControl>
+</UserControl>

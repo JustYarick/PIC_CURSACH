@@ -13,13 +13,34 @@
         <viewModel:LoginViewModel/>
     </Window.DataContext>
     <Grid Background="{DynamicResource ApplicationBackground}">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="250">
-            <TextBlock Foreground="White" Text="Вход в систему" FontWeight="Bold" FontSize="20" Margin="0 0 0 18" HorizontalAlignment="Center"/>
-            <ui:TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0 4"/>
-            <ui:PasswordBox Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0 4"/>
-            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Margin="0 4" TextWrapping="Wrap"/>
-            <ui:Button Content="Войти" Command="{Binding LoginCommand}" Margin="0 12 0 0"/>
-            <TextBlock Text="Для теста: admin/admin, manager/manager ..." FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="0,20,0,0"/>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
+            <TextBlock Foreground="White"
+                       Text="Вход в систему депозитного отдела банка"
+                       FontWeight="Bold"
+                       FontSize="20"
+                       Margin="0 0 0 18"
+                       HorizontalAlignment="Center"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"/>
+
+            <ui:TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
+                        Margin="0 4"
+                        PlaceholderText="Логин"/>
+
+            <ui:PasswordBox Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Margin="0 4"
+                            PlaceholderText="Пароль"/>
+
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="Red"
+                       Margin="0 4"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"/>
+
+            <ui:Button Content="Войти"
+                       Command="{Binding LoginCommand}"
+                       Margin="0 12 0 0"
+                       HorizontalAlignment="Stretch"/>
         </StackPanel>
     </Grid>
 </Window>

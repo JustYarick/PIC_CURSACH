@@ -1,65 +1,80 @@
 using System.Windows;
-using System.Windows.Input;
-using Microsoft.Extensions.DependencyInjection;
-using PIC_CURSACH.ViewModel;
-
-using System.Windows;
-using System.Windows.Input;
-using Microsoft.Extensions.DependencyInjection;
+using System.Windows.Controls;
 
 namespace PIC_CURSACH.View;
 
 public partial class AdminWindow : Window
 {
-    public AdminViewModel ViewModel { get; }
+    private readonly HashSet<string> _loadedTabs = new();
 
     public AdminWindow()
     {
         InitializeComponent();
 
-        var serviceConfigurator = App.CurrentServiceConfigurator;
-        if (serviceConfigurator == null)
-        {
-            MessageBox.Show("ServiceConfigurator не инициализирован.", "Ошибка",
-                MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        ViewModel = serviceConfigurator.Services.GetRequiredService<AdminViewModel>();
-        DataContext = ViewModel;
-
-        Loaded += async (s, e) => await ViewModel.InitializeAsync();
+        // Загружаем первую вкладку при открытии окна
+        LoadTab(ClientsTab);
     }
 
-    private void ClientsDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (DataContext is AdminViewModel vm && vm.SelectedClient != null)
+        if (e.Source is TabControl tabControl && tabControl.SelectedItem is TabItem selectedTab)
         {
-            ViewModel.OpenClientDetails();
+            LoadTab(selectedTab);
         }
     }
 
-    private void EmployeesDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void LoadTab(TabItem tab)
     {
-        if (DataContext is AdminViewModel vm && vm.SelectedEmployee != null)
-        {
-            ViewModel.OpenEmployeeDetails();
-        }
-    }
+        if (_loadedTabs.Contains(tab.Name)) return;
 
-    private void DepositTypeDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-    {
-        if (DataContext is AdminViewModel vm && vm.SelectedDepositType != null)
+        switch (tab.Name)
         {
-            ViewModel.OpenDepositTypeDetails();
-        }
-    }
+            case "ClientsTab":
+                tab.Content = new controls.ClientsTableControl
+                {
+                    CanAdd = true,
+                    CanEdit = true,
+                    CanDelete = true
+                };
+                break;
 
-    private void DepositContractDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-    {
-        if (DataContext is AdminViewModel vm && vm.SelectedDepositContract != null)
-        {
-            ViewModel.OpenDepositContractDetails();
+            case "EmployeesTab":
+                tab.Content = new controls.EmployeesTableControl
+                {
+                    CanAdd = true,
+                    CanEdit = true,
+                    CanDelete = true
+                };
+                break;
+
+            case "OperationsTab":
+                tab.Content = new controls.DepositOperationsTableControl
+                {
+                    CanAdd = true,
+                    CanEdit = true,
+                    CanDelete = true
+                };
+                break;
+
+            case "TypesTab":
+                tab.Content = new controls.DepositTypesTableControl
+                {
+                    CanAdd = true,
+                    CanEdit = true,
+                    CanDelete = true
+                };
+                break;
+
+            case "ContractsTab":
+                tab.Content = new controls.DepositContractsTableControl
+                {
+                    CanAdd = true,
+                    CanEdit = true,
+                    CanDelete = true
+                };
+                break;
         }
+
+        _loadedTabs.Add(tab.Name);
     }
 }

@@ -1,0 +1,25 @@
+<UserControl x:Class="PIC_CURSACH.View.controls.DepositTypesTableControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:PIC_CURSACH.View.controls"
+             Loaded="OnLoaded">
+    <controls:EntityTableControl
+        ItemsSource="{Binding DepositTypes}"
+        SelectedItem="{Binding SelectedDepositType, Mode=TwoWay}"
+        AddCommand="{Binding ShowAddFormCommand}"
+        EditCommand="{Binding ShowEditFormCommand}"
+        DeleteCommand="{Binding DeleteDepositTypeCommand}"
+        CanAdd="{Binding CanAdd}"
+        CanEdit="{Binding CanEdit}"
+        CanDelete="{Binding CanDelete}"
+        RowDoubleClick="OnRowDoubleClick">
+        <controls:EntityTableControl.Columns>
+            <DataGridTextColumn Header="ID" Binding="{Binding TypeId}"
+                                IsReadOnly="True" Width="60" />
+            <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*" />
+            <DataGridTextColumn Header="Процент" Binding="{Binding InterestRate}" Width="*" />
+            <DataGridTextColumn Header="Миним. сумма" Binding="{Binding MinAmount}" Width="*" />
+            <DataGridTextColumn Header="Срок (дней)" Binding="{Binding TermDays}" Width="*" />
+        </controls:EntityTableControl.Columns>
+    </controls:EntityTableControl>
+</UserControl>
