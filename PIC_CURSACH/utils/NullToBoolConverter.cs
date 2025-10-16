@@ -5,11 +5,12 @@ namespace PIC_CURSACH.utils;
 
 public class NullToBoolConverter : IValueConverter
 {
-    public static NullToBoolConverter Instance { get; } = new();
+    public bool Invert { get; set; } = false;
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return value != null;
+        bool isNull = value == null;
+        return Invert ? isNull : !isNull;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

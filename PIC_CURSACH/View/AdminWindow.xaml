@@ -1,0 +1,93 @@
+<Window x:Class="PIC_CURSACH.View.AdminWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:viewModel="clr-namespace:PIC_CURSACH.ViewModel"
+        xmlns:utils="clr-namespace:PIC_CURSACH.utils"
+        mc:Ignorable="d"
+        Background="{DynamicResource WindowBackground}"
+        Title="AdminWindow" Height="450" Width="800">
+    <!-- <Window.DataContext> -->
+    <!--     <viewModel:AdminViewModel/> -->
+    <!-- </Window.DataContext> -->
+    <Window.Resources>
+        <utils:NullToBoolConverter x:Key="NullToBoolConverter"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок -->
+        <Border Background="#34495E" Padding="20">
+            <TextBlock Foreground="White" FontSize="24" FontWeight="Bold" Text="Панель администратора" />
+        </Border>
+
+        <!-- Основной контент -->
+        <TabControl Grid.Row="1" Margin="10">
+            <!-- Управление пользователями -->
+            <TabItem Header="Пользователи" Padding="10">
+                <StackPanel>
+                    <!-- Пример: таблица пользователей с возможностью загрузки данных, редактирования и удаления -->
+                    <DataGrid ItemsSource="{Binding Users}"
+                              SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
+                              AutoGenerateColumns="False"
+                              Height="400"
+                              Margin="0,0,0,12">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding UserId}" Width="50" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Логин" Binding="{Binding Username}" Width="*" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Роль" Binding="{Binding Role.RoleName}" Width="150" IsReadOnly="True"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <ui:Button Content="Обновить список"
+                                   Command="{Binding LoadUsersCommand}"
+                                   Margin="10"
+                                   Width="140"/>
+                        <ui:Button Content="Удалить"
+                                   Command="{Binding DeleteUserCommand}"
+                                   Margin="10"
+                                   Width="140"
+                                   IsEnabled="{Binding SelectedUser, Converter={StaticResource NullToBoolConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+
+            <!-- Журнал аудита -->
+            <TabItem Header="Журнал аудита" Padding="10">
+                <DataGrid ItemsSource="{Binding AuditLogs}"
+                          AutoGenerateColumns="False"
+                          Margin="0"
+                          IsReadOnly="True"
+                          Height="560">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Время" Binding="{Binding ChangedAt}" Width="180"/>
+                        <DataGridTextColumn Header="Таблица" Binding="{Binding TableName}" Width="100"/>
+                        <DataGridTextColumn Header="Операция" Binding="{Binding Operation}" Width="100"/>
+                        <DataGridTextColumn Header="Пользователь" Binding="{Binding ChangedBy}" Width="150"/>
+                        <DataGridTextColumn Header="Изменения (старое)" Binding="{Binding OldValues}" Width="*" />
+                        <DataGridTextColumn Header="Изменения (новое)" Binding="{Binding NewValues}" Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <!-- Системное администрирование -->
+            <TabItem Header="Системные настройки" Padding="10">
+                <TextBlock Text="Здесь будут системные настройки и другие административные функции."
+                           FontSize="14" Foreground="Gray" Margin="10"/>
+            </TabItem>
+        </TabControl>
+
+        <!-- Статус -->
+        <StatusBar Grid.Row="2" Padding="5">
+            <StatusBarItem Content="Готов" />
+        </StatusBar>
+    </Grid>
+</Window>
