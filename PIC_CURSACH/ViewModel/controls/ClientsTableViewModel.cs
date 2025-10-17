@@ -94,10 +94,7 @@ public partial class ClientsTableViewModel : ObservableObject
     {
         if (SelectedClient == null) return;
 
-        var detailsWindow = new ClientDetailsWindow
-        {
-            DataContext = SelectedClient
-        };
+        var detailsWindow = new ClientDetailsWindow(SelectedClient);
         detailsWindow.ShowDialog();
     }
 

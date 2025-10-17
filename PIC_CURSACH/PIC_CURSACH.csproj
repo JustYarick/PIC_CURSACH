@@ -19,8 +19,4 @@
       <PackageReference Include="WPF-UI" Version="4.0.3" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="ViewModel\entityDetails\" />
-    </ItemGroup>
-
 </Project>

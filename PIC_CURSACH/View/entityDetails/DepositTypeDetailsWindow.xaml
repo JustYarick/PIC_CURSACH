@@ -1,67 +1,123 @@
 <Window x:Class="PIC_CURSACH.View.entityDetails.DepositTypeDetailsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Информация о типе депозита" Height="500" Width="820"
-        Background="{DynamicResource WindowBackground}" Foreground="White" WindowStartupLocation="CenterScreen">
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Редактирование типа депозита" Height="650" Width="800"
+        Background="{DynamicResource WindowBackground}" Foreground="White"
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Верхняя часть: форма о типе депозита -->
-        <Border Grid.Row="0" Padding="22">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="ID типа депозита: " FontWeight="Bold" />
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding TypeId}" />
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="10">
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Название: " FontWeight="Bold" />
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Name}" />
+                <!-- Основная информация -->
+                <ui:CardExpander Header="Основная информация" IsExpanded="True" Margin="0,0,0,10">
+                    <Grid Margin="20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="Процентная ставка: " FontWeight="Bold" />
-                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding InterestRate}" />
+                        <!-- ID типа -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="ID типа:"
+                                   VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                        <ui:TextBox Grid.Row="0" Grid.Column="1"
+                                    Text="{Binding TypeId}"
+                                    IsReadOnly="True"
+                                    Margin="0,0,0,12"/>
 
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="Минимальная сумма: " FontWeight="Bold" />
-                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding MinAmount}" />
+                        <!-- Название -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Название:"
+                                   VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                        <ui:TextBox Grid.Row="1" Grid.Column="1"
+                                    Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                    Margin="0,0,0,12"/>
 
-                <TextBlock Grid.Row="5" Grid.Column="0" Text="Срок (дней): " FontWeight="Bold" />
-                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding TermDays}" />
-            </Grid>
-        </Border>
+                        <!-- Процентная ставка -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Процентная ставка (%):"
+                                   VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                        <ui:NumberBox Grid.Row="2" Grid.Column="1"
+                                      Value="{Binding InterestRate, UpdateSourceTrigger=PropertyChanged}"
+                                      Margin="0,0,0,12"
+                                      Height="36"/>
 
-        <!-- Разделитель -->
-        <Separator Grid.Row="1" Margin="0,14,0,14" Background="#444" />
+                        <!-- Минимальная сумма -->
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Минимальная сумма:"
+                                   VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                        <ui:NumberBox Grid.Row="3" Grid.Column="1"
+                                      Value="{Binding MinAmount, UpdateSourceTrigger=PropertyChanged}"
+                                      Margin="0,0,0,12"
+                                      Height="36"/>
 
-        <!-- Таблица депозитных договоров данного типа -->
-        <Border Grid.Row="2" CornerRadius="8" Padding="14">
-            <StackPanel>
-                <TextBlock Text="Депозитные договоры этого типа" FontSize="17" FontWeight="Bold" Margin="0,0,0,7"/>
-                <DataGrid ItemsSource="{Binding DepositContracts}" AutoGenerateColumns="False" IsReadOnly="True"
-                          Foreground="White"
-                          HeadersVisibility="Column" BorderThickness="0">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding ContractId}" Width="60"/>
-                        <DataGridTextColumn Header="Клиент" Binding="{Binding Client.FirstName}" Width="150"/>
-                        <DataGridTextColumn Header="Сумма" Binding="{Binding Amount, StringFormat=N2}" Width="110"/>
-                        <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate, StringFormat=d}" Width="120"/>
-                        <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate, StringFormat=d}" Width="120"/>
-                        <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="90"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+                        <!-- Срок (дни) -->
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Срок (дни):"
+                                   VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <ui:NumberBox Grid.Row="4" Grid.Column="1"
+                                      Value="{Binding TermDays, UpdateSourceTrigger=PropertyChanged}"
+                                      Height="36"/>
+                    </Grid>
+                </ui:CardExpander>
+
+                <!-- Депозитные договоры -->
+                <ui:CardExpander Header="Депозитные договоры с этим типом" IsExpanded="True">
+                    <StackPanel Margin="20">
+                        <DataGrid x:Name="ContractsDataGrid"
+                                  ItemsSource="{Binding DepositContracts}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  IsReadOnly="True"
+                                  HeadersVisibility="Column"
+                                  BorderThickness="1"
+                                  MinHeight="180"
+                                  SelectionMode="Single">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ID"
+                                                    Binding="{Binding ContractId}"
+                                                    Width="60"/>
+                                <DataGridTextColumn Header="Клиент"
+                                                    Binding="{Binding Client.LastName}"
+                                                    Width="*"/>
+                                <DataGridTextColumn Header="Сумма"
+                                                    Binding="{Binding Amount, StringFormat=N2}"
+                                                    Width="120"/>
+                                <DataGridTextColumn Header="Дата начала"
+                                                    Binding="{Binding StartDate, StringFormat=d}"
+                                                    Width="120"/>
+                                <DataGridTextColumn Header="Статус"
+                                                    Binding="{Binding Status}"
+                                                    Width="100"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </ui:CardExpander>
+
             </StackPanel>
-        </Border>
+        </ScrollViewer>
+
+        <!-- Кнопки -->
+        <ui:CardControl Grid.Row="1" Margin="20,10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <ui:Button x:Name="SaveButton"
+                           Content="Сохранить изменения"
+                           Click="Save_Click"
+                           Icon="{ui:SymbolIcon Save24}"
+                           Appearance="Primary"
+                           Margin="0,0,10,0"/>
+                <ui:Button Content="Отмена"
+                           Click="Cancel_Click"
+                           Icon="{ui:SymbolIcon Dismiss24}"/>
+            </StackPanel>
+        </ui:CardControl>
     </Grid>
 </Window>

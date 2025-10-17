@@ -278,10 +278,7 @@ public partial class DepositContractsTableViewModel : ObservableObject
     {
         if (SelectedDepositContract == null) return;
 
-        var detailsWindow = new DepositContractDetailsWindow
-        {
-            DataContext = SelectedDepositContract
-        };
+        var detailsWindow = new DepositContractDetailsWindow(SelectedDepositContract);
         detailsWindow.ShowDialog();
     }
 

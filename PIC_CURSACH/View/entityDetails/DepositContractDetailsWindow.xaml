@@ -1,106 +1,239 @@
 <Window x:Class="PIC_CURSACH.View.entityDetails.DepositContractDetailsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Информация о депозитном договоре" Height="750" Width="900"
-        Background="{DynamicResource WindowBackground}" Foreground="White" WindowStartupLocation="CenterScreen">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Редактирование депозитного договора" Height="800" Width="900"
+        Background="{DynamicResource WindowBackground}" Foreground="White"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-            <!-- Основная информация о договоре + вложенные сущности -->
-            <Border Grid.Row="0" Padding="22" CornerRadius="8">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="220"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="10">
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="ID договора:" FontWeight="Bold" />
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ContractId}" />
+                <!-- Основная информация -->
+                <ui:CardExpander Header="Основная информация" IsExpanded="True" Margin="0,0,0,10">
+                    <Grid Margin="20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Сумма:" FontWeight="Bold" />
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Amount, StringFormat=N2}" />
+                        <!-- ID договора -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="ID договора:"
+                                   VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                        <ui:TextBox Grid.Row="0" Grid.Column="1"
+                                    Text="{Binding ContractId}"
+                                    IsReadOnly="True"
+                                    Margin="0,0,0,12"/>
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Дата начала:" FontWeight="Bold" />
-                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding StartDate, StringFormat=d}" />
+                        <!-- Сумма -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Сумма:"
+                                   VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                        <ui:NumberBox Grid.Row="1" Grid.Column="1"
+                                      Value="{Binding Amount, UpdateSourceTrigger=PropertyChanged}"
+                                      Margin="0,0,0,12"
+                                      Height="36"/>
 
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Дата окончания:" FontWeight="Bold" />
-                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding EndDate, StringFormat=d}" />
+                        <!-- Дата начала -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Дата начала:"
+                                   VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                        <DatePicker Grid.Row="2" Grid.Column="1"
+                                    SelectedDate="{Binding StartDate, UpdateSourceTrigger=PropertyChanged}"
+                                    Margin="0,0,0,12"
+                                    Height="36"/>
 
-                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Статус:" FontWeight="Bold" />
-                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Status}" />
+                        <!-- Дата окончания -->
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Дата окончания:"
+                                   VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                        <DatePicker Grid.Row="3" Grid.Column="1"
+                                    SelectedDate="{Binding EndDate, UpdateSourceTrigger=PropertyChanged}"
+                                    Margin="0,0,0,12"
+                                    Height="36"/>
 
-                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Клиент:" FontWeight="Bold" />
-                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding ClientDisplay}" />
+                        <!-- Статус -->
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Статус:"
+                                   VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                        <ui:TextBox Grid.Row="4" Grid.Column="1"
+                                    Text="{Binding Status, UpdateSourceTrigger=PropertyChanged}"
+                                    Margin="0,0,0,12"/>
 
-                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Сотрудник:" FontWeight="Bold" />
-                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding EmployeeDisplay}" />
+                        <!-- Клиент -->
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Клиент:"
+                                   VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                        <ComboBox Grid.Row="5" Grid.Column="1"
+                                  ItemsSource="{Binding AvailableClients}"
+                                  SelectedValue="{Binding SelectedClientId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedValuePath="ClientId"
+                                  Margin="0,0,0,12"
+                                  Height="36">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding LastName}"/>
+                                        <Run Text=" "/>
+                                        <Run Text="{Binding FirstName}"/>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
 
-                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Филиал:" FontWeight="Bold" />
-                    <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding BranchDisplay}" />
+                        <!-- Сотрудник -->
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Сотрудник:"
+                                   VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                        <ComboBox Grid.Row="6" Grid.Column="1"
+                                  ItemsSource="{Binding AvailableEmployees}"
+                                  SelectedValue="{Binding SelectedEmployeeId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedValuePath="EmployeeId"
+                                  Margin="0,0,0,12"
+                                  Height="36">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding LastName}"/>
+                                        <Run Text=" "/>
+                                        <Run Text="{Binding FirstName}"/>
+                                        <Run Text=" ("/>
+                                        <Run Text="{Binding Position}"/>
+                                        <Run Text=")"/>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
 
-                    <TextBlock Grid.Row="8" Grid.Column="0" Text="Тип депозита:" FontWeight="Bold" />
-                    <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding DepositTypeDisplay}" />
-                </Grid>
-            </Border>
+                        <!-- Филиал -->
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Филиал:"
+                                   VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                        <ComboBox Grid.Row="7" Grid.Column="1"
+                                  ItemsSource="{Binding AvailableBranches}"
+                                  SelectedValue="{Binding SelectedBranchId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedValuePath="BranchId"
+                                  DisplayMemberPath="Name"
+                                  Margin="0,0,0,12"
+                                  Height="36"/>
 
-            <!-- Разделитель -->
-            <Separator Grid.Row="1" Margin="0,14,0,14" Background="#444" />
+                        <!-- Тип депозита -->
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Тип депозита:"
+                                   VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <ComboBox Grid.Row="8" Grid.Column="1"
+                                  ItemsSource="{Binding AvailableDepositTypes}"
+                                  SelectedValue="{Binding SelectedDepositTypeId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedValuePath="TypeId"
+                                  DisplayMemberPath="Name"
+                                  Height="36"/>
+                    </Grid>
+                </ui:CardExpander>
 
-            <!-- Таблица Документов -->
-            <Border Grid.Row="2" CornerRadius="8" Padding="14">
-                <StackPanel>
-                    <TextBlock Text="Документы" FontSize="17" FontWeight="Bold" Margin="0,0,0,7"/>
-                    <DataGrid ItemsSource="{Binding Documents}" AutoGenerateColumns="False" IsReadOnly="True"
-                              Foreground="White"
-                              HeadersVisibility="Column" BorderThickness="0"
-                              MinHeight="100" MaxHeight="200">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding DocumentId}" Width="50"/>
-                            <DataGridTextColumn Header="Тип документа" Binding="{Binding DocumentType}" Width="*"/>
-                            <DataGridTextColumn Header="Путь к файлу" Binding="{Binding FilePath}" Width="2*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
-            </Border>
+                <!-- Документы -->
+                <ui:CardExpander Header="Документы" IsExpanded="True" Margin="0,0,0,10">
+                    <StackPanel Margin="20">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+                            <ui:Button Content="Добавить"
+                                       Icon="{ui:SymbolIcon Add24}"
+                                       Click="AddDocument_Click"
+                                       Margin="0,0,5,0"/>
+                            <ui:Button Content="Удалить"
+                                       Icon="{ui:SymbolIcon Delete24}"
+                                       Click="RemoveDocument_Click"
+                                       Appearance="Danger"/>
+                        </StackPanel>
 
-            <!-- Разделитель -->
-            <Separator Grid.Row="3" Margin="0,14,0,14" Background="#444" />
+                        <DataGrid x:Name="DocumentsDataGrid"
+                                  ItemsSource="{Binding Documents}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  HeadersVisibility="Column"
+                                  BorderThickness="1"
+                                  MinHeight="120"
+                                  MaxHeight="250"
+                                  SelectionMode="Single">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ID"
+                                                    Binding="{Binding DocumentId}"
+                                                    Width="60"
+                                                    IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Тип документа"
+                                                    Binding="{Binding DocumentType, UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="*"/>
+                                <DataGridTextColumn Header="Путь к файлу"
+                                                    Binding="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="2*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </ui:CardExpander>
 
-            <!-- Таблица DepositOperations -->
-            <Border Grid.Row="4" CornerRadius="8" Padding="14">
-                <StackPanel>
-                    <TextBlock Text="Операции по депозиту" FontSize="17" FontWeight="Bold" Margin="0,0,0,7"/>
-                    <DataGrid ItemsSource="{Binding DepositOperations}" AutoGenerateColumns="False" IsReadOnly="True"
-                              Foreground="White"
-                              HeadersVisibility="Column" BorderThickness="0"
-                              MinHeight="150">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding OperationId}" Width="60"/>
-                            <DataGridTextColumn Header="Тип операции" Binding="{Binding OperationType}" Width="*"/>
-                            <DataGridTextColumn Header="Сумма" Binding="{Binding Amount, StringFormat=N2}" Width="100"/>
-                            <DataGridTextColumn Header="Дата" Binding="{Binding OperationDate, StringFormat=g}" Width="140"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
-            </Border>
-        </Grid>
-    </ScrollViewer>
+                <!-- Операции -->
+                <ui:CardExpander Header="Операции по депозиту" IsExpanded="True">
+                    <StackPanel Margin="20">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+                            <ui:Button Content="Добавить"
+                                       Icon="{ui:SymbolIcon Add24}"
+                                       Click="AddOperation_Click"
+                                       Margin="0,0,5,0"/>
+                            <ui:Button Content="Удалить"
+                                       Icon="{ui:SymbolIcon Delete24}"
+                                       Click="RemoveOperation_Click"
+                                       Appearance="Danger"/>
+                        </StackPanel>
+
+                        <DataGrid x:Name="OperationsDataGrid"
+                                  ItemsSource="{Binding DepositOperations}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  HeadersVisibility="Column"
+                                  BorderThickness="1"
+                                  MinHeight="180"
+                                  SelectionMode="Single">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ID"
+                                                    Binding="{Binding OperationId}"
+                                                    Width="60"
+                                                    IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Тип операции"
+                                                    Binding="{Binding OperationType, UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="*"/>
+                                <DataGridTextColumn Header="Сумма"
+                                                    Binding="{Binding Amount, StringFormat=N2, UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="120"/>
+                                <DataGridTextColumn Header="Дата"
+                                                    Binding="{Binding OperationDate, StringFormat=g, UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="150"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </ui:CardExpander>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Кнопки -->
+        <ui:CardControl Grid.Row="1" Margin="20,10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <ui:Button x:Name="SaveButton"
+                           Content="Сохранить изменения"
+                           Click="Save_Click"
+                           Icon="{ui:SymbolIcon Save24}"
+                           Appearance="Primary"
+                           Margin="0,0,10,0"/>
+                <ui:Button Content="Отмена"
+                           Click="Cancel_Click"
+                           Icon="{ui:SymbolIcon Dismiss24}"/>
+            </StackPanel>
+        </ui:CardControl>
+    </Grid>
 </Window>
