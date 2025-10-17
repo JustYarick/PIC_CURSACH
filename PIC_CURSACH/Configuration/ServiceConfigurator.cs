@@ -45,6 +45,8 @@ public class ServiceConfigurator
         services.AddSingleton<IDepositOperationService, DepositOperationService>();
         services.AddSingleton<IDepositTypeService, DepositTypeService>();
         services.AddSingleton<IBranchService, BranchService>();
+        services.AddSingleton<IDocumentService, DocumentService>();
+        services.AddSingleton<IAuditLogService, AuditLogService>();
 
         services.AddTransient<ClientsTableViewModel>();
         services.AddTransient<AdminViewModel>();
@@ -53,6 +55,8 @@ public class ServiceConfigurator
         services.AddTransient<DepositOperationsTableViewModel>();
         services.AddTransient<DepositTypesTableViewModel>();
         services.AddTransient<DepositContractsTableViewModel>();
+        services.AddScoped<DocumentsTableViewModel>();
+        services.AddScoped<AuditLogsTableViewModel>();
 
 
         Services = serviceCollection.BuildServiceProvider();

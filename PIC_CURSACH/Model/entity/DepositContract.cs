@@ -35,6 +35,7 @@ public class DepositContract
     [Column("status")]
     public string Status { get; set; } = "ACTIVE";
 
+    // Navigation properties
     [ForeignKey("ClientId")]
     public virtual Client Client { get; set; } = null!;
 
@@ -47,7 +48,11 @@ public class DepositContract
     [ForeignKey("BranchId")]
     public virtual Branch Branch { get; set; } = null!;
 
+    // Навигация по операциям
     public virtual ICollection<DepositOperation> DepositOperations { get; set; } = new List<DepositOperation>();
+
+    // Навигация по документам
+    public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
 
     public void AddDepositOperation(DepositOperation operation)
     {
@@ -55,13 +60,29 @@ public class DepositContract
         DepositOperations.Add(operation);
     }
 
+    public void AddDocument(Document document)
+    {
+        document.Contract = this;
+        Documents.Add(document);
+    }
+
     [NotMapped]
     public string ClientDisplay => Client != null ? $"{Client.FirstName} {Client.LastName} | {Client.Passport}" : "";
+
     [NotMapped]
     public string EmployeeDisplay => Employee != null ? $"{Employee.FirstName} {Employee.LastName}, {Employee.Position}" : "";
+
     [NotMapped]
     public string BranchDisplay => Branch != null ? $"{Branch.Name}, {Branch.Address}" : "";
+
     [NotMapped]
     public string DepositTypeDisplay => DepositType != null ? $"{DepositType.Name} ({DepositType.InterestRate}% на {DepositType.TermDays} дн., мин. {DepositType.MinAmount})" : "";
 
+    [NotMapped]
+    public int DocumentsCount => Documents?.Count ?? 0;
+
+    [NotMapped]
+    public string DocumentsDisplay => Documents != null && Documents.Any()
+        ? string.Join(", ", Documents.Select(d => d.DocumentType))
+        : "Нет документов";
 }

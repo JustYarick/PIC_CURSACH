@@ -13,7 +13,8 @@ public class DepositContext : DbContext
     public DbSet<DepositType> DepositTypes { get; set; } = null!;
     public DbSet<DepositContract> DepositContracts { get; set; } = null!;
     public DbSet<DepositOperation> DepositOperations { get; set; } = null!;
-    public DbSet<InterestAccrual> InterestAccruals { get; set; } = null!;
+    public DbSet<Document> Documents { get; set; } = null!;
+    public DbSet<AuditLog> AuditLogs { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

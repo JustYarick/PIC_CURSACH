@@ -17,7 +17,6 @@
 
         <TabControl Grid.Row="1" Margin="10" SelectionChanged="TabControl_SelectionChanged">
             <TabItem Header="Клиенты" Padding="10" Name="ClientsTab">
-                <!-- Контент загрузится только при выборе вкладки -->
             </TabItem>
 
             <TabItem Header="Сотрудники" Padding="10" Name="EmployeesTab">
@@ -30,6 +29,12 @@
             </TabItem>
 
             <TabItem Header="Депозитные договоры" Padding="10" Name="ContractsTab">
+            </TabItem>
+
+            <TabItem Header="Документы" Padding="10" Name="DocumentsTab">
+            </TabItem>
+
+            <TabItem Header="Журнал аудита" Padding="10" Name="AuditTab">
             </TabItem>
         </TabControl>
     </Grid>

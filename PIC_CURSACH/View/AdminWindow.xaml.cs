@@ -73,6 +73,18 @@ public partial class AdminWindow : Window
                     CanDelete = true
                 };
                 break;
+            case "DocumentsTab":
+                tab.Content = new controls.DocumentsTableControl
+                {
+                    CanAdd = true,
+                    CanEdit = true,
+                    CanDelete = true
+                };
+                break;
+
+            case "AuditTab":
+                tab.Content = new controls.AuditLogsTableControl();
+                break;
         }
 
         _loadedTabs.Add(tab.Name);

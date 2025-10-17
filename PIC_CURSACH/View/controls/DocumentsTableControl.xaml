@@ -1,0 +1,23 @@
+<UserControl x:Class="PIC_CURSACH.View.controls.DocumentsTableControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:PIC_CURSACH.View.controls"
+             Loaded="OnLoaded">
+    <controls:EntityTableControl
+        ItemsSource="{Binding Documents}"
+        SelectedItem="{Binding SelectedDocument, Mode=TwoWay}"
+        AddCommand="{Binding ShowAddFormCommand}"
+        EditCommand="{Binding ShowEditFormCommand}"
+        DeleteCommand="{Binding DeleteDocumentCommand}"
+        CanAdd="{Binding CanAdd}"
+        CanEdit="{Binding CanEdit}"
+        CanDelete="{Binding CanDelete}">
+        <controls:EntityTableControl.Columns>
+            <DataGridTextColumn Header="ID" Binding="{Binding DocumentId}"
+                                IsReadOnly="True" Width="60" />
+            <DataGridTextColumn Header="Договор ID" Binding="{Binding ContractId}" Width="100" />
+            <DataGridTextColumn Header="Тип документа" Binding="{Binding DocumentType}" Width="*" />
+            <DataGridTextColumn Header="Путь к файлу" Binding="{Binding FilePath}" Width="2*" />
+        </controls:EntityTableControl.Columns>
+    </controls:EntityTableControl>
+</UserControl>

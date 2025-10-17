@@ -15,7 +15,7 @@
     <Grid Background="{DynamicResource ApplicationBackground}">
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
             <TextBlock Foreground="White"
-                       Text="Вход в систему депозитного отдела банка"
+                       Text="Вход в систему депозитного отдела коммерчиского банка"
                        FontWeight="Bold"
                        FontSize="20"
                        Margin="0 0 0 18"

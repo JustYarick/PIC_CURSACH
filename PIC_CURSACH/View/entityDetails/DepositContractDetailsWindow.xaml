@@ -1,11 +1,13 @@
 <Window x:Class="PIC_CURSACH.View.entityDetails.DepositContractDetailsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Информация о депозитном договоре" Height="650" Width="900"
+        Title="Информация о депозитном договоре" Height="750" Width="900"
         Background="{DynamicResource WindowBackground}" Foreground="White" WindowStartupLocation="CenterScreen">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -62,16 +64,37 @@
             <!-- Разделитель -->
             <Separator Grid.Row="1" Margin="0,14,0,14" Background="#444" />
 
-            <!-- Таблица DepositOperations -->
+            <!-- Таблица Документов -->
             <Border Grid.Row="2" CornerRadius="8" Padding="14">
+                <StackPanel>
+                    <TextBlock Text="Документы" FontSize="17" FontWeight="Bold" Margin="0,0,0,7"/>
+                    <DataGrid ItemsSource="{Binding Documents}" AutoGenerateColumns="False" IsReadOnly="True"
+                              Foreground="White"
+                              HeadersVisibility="Column" BorderThickness="0"
+                              MinHeight="100" MaxHeight="200">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding DocumentId}" Width="50"/>
+                            <DataGridTextColumn Header="Тип документа" Binding="{Binding DocumentType}" Width="*"/>
+                            <DataGridTextColumn Header="Путь к файлу" Binding="{Binding FilePath}" Width="2*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
+            <!-- Разделитель -->
+            <Separator Grid.Row="3" Margin="0,14,0,14" Background="#444" />
+
+            <!-- Таблица DepositOperations -->
+            <Border Grid.Row="4" CornerRadius="8" Padding="14">
                 <StackPanel>
                     <TextBlock Text="Операции по депозиту" FontSize="17" FontWeight="Bold" Margin="0,0,0,7"/>
                     <DataGrid ItemsSource="{Binding DepositOperations}" AutoGenerateColumns="False" IsReadOnly="True"
                               Foreground="White"
-                              HeadersVisibility="Column" BorderThickness="0">
+                              HeadersVisibility="Column" BorderThickness="0"
+                              MinHeight="150">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" Binding="{Binding OperationId}" Width="60"/>
-                            <DataGridTextColumn Header="Тип операции" Binding="{Binding OperationType}" Width="120"/>
+                            <DataGridTextColumn Header="Тип операции" Binding="{Binding OperationType}" Width="*"/>
                             <DataGridTextColumn Header="Сумма" Binding="{Binding Amount, StringFormat=N2}" Width="100"/>
                             <DataGridTextColumn Header="Дата" Binding="{Binding OperationDate, StringFormat=g}" Width="140"/>
                         </DataGrid.Columns>
