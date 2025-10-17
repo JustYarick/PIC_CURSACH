@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using Microsoft.Extensions.DependencyInjection;
 using PIC_CURSACH.Model.entity;
 using PIC_CURSACH.Service.Interfaces;
@@ -15,10 +17,15 @@ namespace PIC_CURSACH.View.entityDetails
         private readonly IDepositTypeService _depositTypeService;
         private DepositType _depositType;
         private DepositTypeViewModel _viewModel;
+        private readonly bool _canEdit;
 
-        public DepositTypeDetailsWindow(DepositType selectedDepositType)
+        public DepositTypeDetailsWindow(DepositType selectedDepositType, bool canEdit = false)
         {
             InitializeComponent();
+            _canEdit = canEdit;
+
+            // Изменяем заголовок окна
+            Title = canEdit ? "Редактирование типа депозита" : "Просмотр типа депозита";
 
             IServiceProvider serviceProvider = App.CurrentServiceConfigurator.Services;
             _depositTypeService = serviceProvider.GetRequiredService<IDepositTypeService>();
@@ -49,10 +56,15 @@ namespace PIC_CURSACH.View.entityDetails
                     InterestRate = _depositType.InterestRate,
                     MinAmount = _depositType.MinAmount,
                     TermDays = _depositType.TermDays,
-                    DepositContracts = new ObservableCollection<DepositContract>(contracts)
+                    DepositContracts = new ObservableCollection<DepositContract>(contracts),
+                    IsEditable = _canEdit,
+                    CloseButtonText = _canEdit ? "Отмена" : "Закрыть"
                 };
 
                 DataContext = _viewModel;
+
+                // Настраиваем UI в зависимости от прав
+                ApplyEditMode();
             }
             catch (Exception ex)
             {
@@ -62,8 +74,52 @@ namespace PIC_CURSACH.View.entityDetails
             }
         }
 
+        private void ApplyEditMode()
+        {
+            if (!_canEdit)
+            {
+                // Скрываем кнопку сохранения
+                SaveButton.Visibility = Visibility.Collapsed;
+
+                // Делаем все текстовые поля только для чтения
+                foreach (var textBox in FindVisualChildren<Wpf.Ui.Controls.TextBox>(this))
+                {
+                    textBox.IsReadOnly = true;
+                }
+
+                // Делаем все NumberBox только для чтения
+                foreach (var numberBox in FindVisualChildren<Wpf.Ui.Controls.NumberBox>(this))
+                {
+                    numberBox.IsReadOnly = true;
+                }
+            }
+        }
+
+        // Вспомогательный метод для поиска дочерних элементов
+        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj == null) yield break;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(depObj, i);
+
+                if (child is T t)
+                {
+                    yield return t;
+                }
+
+                foreach (T childOfChild in FindVisualChildren<T>(child))
+                {
+                    yield return childOfChild;
+                }
+            }
+        }
+
         private async void Save_Click(object sender, RoutedEventArgs e)
         {
+            if (!_canEdit) return; // Дополнительная защита
+
             try
             {
                 SaveButton.IsEnabled = false;
@@ -131,6 +187,12 @@ namespace PIC_CURSACH.View.entityDetails
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
+            if (!_canEdit)
+            {
+                Close();
+                return;
+            }
+
             if (MessageBox.Show("Отменить изменения?", "Подтверждение",
                 MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {

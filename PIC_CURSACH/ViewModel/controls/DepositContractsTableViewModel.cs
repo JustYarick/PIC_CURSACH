@@ -278,7 +278,7 @@ public partial class DepositContractsTableViewModel : ObservableObject
     {
         if (SelectedDepositContract == null) return;
 
-        var detailsWindow = new DepositContractDetailsWindow(SelectedDepositContract);
+        var detailsWindow = new DepositContractDetailsWindow(SelectedDepositContract, true);
         detailsWindow.ShowDialog();
     }
 

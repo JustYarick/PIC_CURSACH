@@ -90,7 +90,7 @@ public partial class EmployeesTableViewModel : ObservableObject
     {
         if (SelectedEmployee == null) return;
 
-        var detailsWindow = new EmployeeDetailsWindow(SelectedEmployee);
+        var detailsWindow = new EmployeeDetailsWindow(SelectedEmployee, true);
         detailsWindow.ShowDialog();
     }
 

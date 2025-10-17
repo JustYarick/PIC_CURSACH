@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using Microsoft.Extensions.DependencyInjection;
 using PIC_CURSACH.Model.entity;
 using PIC_CURSACH.Service.Interfaces;
@@ -15,10 +17,15 @@ namespace PIC_CURSACH.View.entityDetails
         private readonly IClientService _clientService;
         private Client _client;
         private ClientViewModel _viewModel;
+        private readonly bool _canEdit;
 
-        public ClientDetailsWindow(Client selectedClient)
+        public ClientDetailsWindow(Client selectedClient, bool canEdit = false)
         {
             InitializeComponent();
+            _canEdit = canEdit;
+
+            // Изменяем заголовок окна
+            Title = canEdit ? "Редактирование клиента" : "Просмотр клиента";
 
             IServiceProvider serviceProvider = App.CurrentServiceConfigurator.Services;
             _clientService = serviceProvider.GetRequiredService<IClientService>();
@@ -50,10 +57,15 @@ namespace PIC_CURSACH.View.entityDetails
                     Passport = _client.Passport,
                     Phone = _client.Phone ?? string.Empty,
                     Email = _client.Email ?? string.Empty,
-                    DepositContracts = new ObservableCollection<DepositContract>(contracts)
+                    DepositContracts = new ObservableCollection<DepositContract>(contracts),
+                    IsEditable = _canEdit,
+                    CloseButtonText = _canEdit ? "Отмена" : "Закрыть"
                 };
 
                 DataContext = _viewModel;
+
+                // Настраиваем UI в зависимости от прав
+                ApplyEditMode();
             }
             catch (Exception ex)
             {
@@ -63,8 +75,46 @@ namespace PIC_CURSACH.View.entityDetails
             }
         }
 
+        private void ApplyEditMode()
+        {
+            if (!_canEdit)
+            {
+                // Скрываем кнопку сохранения
+                SaveButton.Visibility = Visibility.Collapsed;
+
+                // Делаем все текстовые поля только для чтения
+                foreach (var textBox in FindVisualChildren<Wpf.Ui.Controls.TextBox>(this))
+                {
+                    textBox.IsReadOnly = true;
+                }
+            }
+        }
+
+        // Вспомогательный метод для поиска дочерних элементов
+        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj == null) yield break;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(depObj, i);
+
+                if (child is T t)
+                {
+                    yield return t;
+                }
+
+                foreach (T childOfChild in FindVisualChildren<T>(child))
+                {
+                    yield return childOfChild;
+                }
+            }
+        }
+
         private async void Save_Click(object sender, RoutedEventArgs e)
         {
+            if (!_canEdit) return; // Дополнительная защита
+
             try
             {
                 SaveButton.IsEnabled = false;
@@ -121,6 +171,12 @@ namespace PIC_CURSACH.View.entityDetails
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
+            if (!_canEdit)
+            {
+                Close();
+                return;
+            }
+
             if (MessageBox.Show("Отменить изменения?", "Подтверждение",
                 MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {

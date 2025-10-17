@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using Microsoft.Extensions.DependencyInjection;
 using PIC_CURSACH.Model.entity;
 using PIC_CURSACH.Service.Interfaces;
@@ -10,7 +13,7 @@ using PIC_CURSACH.ViewModel.entityDetail;
 
 namespace PIC_CURSACH.View.entityDetails
 {
-    public partial class DepositContractDetailsWindow
+    public partial class DepositContractDetailsWindow : Window
     {
         private readonly IDepositContractService _depositService;
         private readonly IClientService _clientService;
@@ -20,10 +23,15 @@ namespace PIC_CURSACH.View.entityDetails
 
         private DepositContract _contract;
         private DepositContractViewModel _viewModel;
+        private readonly bool _canEdit;
 
-        public DepositContractDetailsWindow(DepositContract selectedContract)
+        public DepositContractDetailsWindow(DepositContract selectedContract, bool canEdit = false)
         {
             InitializeComponent();
+            _canEdit = canEdit;
+
+            // Изменяем заголовок окна
+            Title = canEdit ? "Редактирование депозитного договора" : "Просмотр депозитного договора";
 
             IServiceProvider serviceProvider = App.CurrentServiceConfigurator.Services;
 
@@ -79,10 +87,16 @@ namespace PIC_CURSACH.View.entityDetails
                     SelectedDepositTypeId = _contract.TypeId,
 
                     Documents = new ObservableCollection<Document>(documents),
-                    DepositOperations = new ObservableCollection<DepositOperation>(operations)
+                    DepositOperations = new ObservableCollection<DepositOperation>(operations),
+
+                    IsEditable = _canEdit,
+                    CloseButtonText = _canEdit ? "Отмена" : "Закрыть"
                 };
 
                 DataContext = _viewModel;
+
+                // Настраиваем UI в зависимости от прав
+                ApplyEditMode();
             }
             catch (Exception ex)
             {
@@ -92,78 +106,143 @@ namespace PIC_CURSACH.View.entityDetails
             }
         }
 
+        private void ApplyEditMode()
+        {
+            if (!_canEdit)
+            {
+                // Скрываем кнопку сохранения
+                SaveButton.Visibility = Visibility.Collapsed;
+
+                // Делаем все текстовые поля только для чтения
+                foreach (var textBox in FindVisualChildren<Wpf.Ui.Controls.TextBox>(this))
+                {
+                    textBox.IsReadOnly = true;
+                }
+
+                // Делаем все NumberBox только для чтения
+                foreach (var numberBox in FindVisualChildren<Wpf.Ui.Controls.NumberBox>(this))
+                {
+                    numberBox.IsReadOnly = true;
+                }
+
+                // Делаем DatePicker недоступными
+                foreach (var datePicker in FindVisualChildren<DatePicker>(this))
+                {
+                    datePicker.IsEnabled = false;
+                }
+
+                // Делаем ComboBox недоступными
+                foreach (var comboBox in FindVisualChildren<ComboBox>(this))
+                {
+                    comboBox.IsEnabled = false;
+                }
+
+                // Делаем DataGrid только для чтения
+                DocumentsDataGrid.IsReadOnly = true;
+                OperationsDataGrid.IsReadOnly = true;
+
+                // Скрываем кнопки добавления/удаления
+                foreach (var button in FindVisualChildren<Wpf.Ui.Controls.Button>(this))
+                {
+                    if (button.Content?.ToString()?.Contains("Добавить") == true ||
+                        button.Content?.ToString()?.Contains("Удалить") == true)
+                    {
+                        button.Visibility = Visibility.Collapsed;
+                    }
+                }
+            }
+        }
+
+        // Вспомогательный метод для поиска дочерних элементов
+        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj == null) yield break;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(depObj, i);
+
+                if (child is T t)
+                {
+                    yield return t;
+                }
+
+                foreach (T childOfChild in FindVisualChildren<T>(child))
+                {
+                    yield return childOfChild;
+                }
+            }
+        }
+
         private async void Save_Click(object sender, RoutedEventArgs e)
-{
-    try
-    {
-        SaveButton.IsEnabled = false;
-
-        // Проверяем обязательные поля
-        if (!_viewModel.SelectedClientId.HasValue)
         {
-            MessageBox.Show("Выберите клиента!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
+            if (!_canEdit) return; // Дополнительная защита
+
+            try
+            {
+                SaveButton.IsEnabled = false;
+
+                // Проверяем обязательные поля
+                if (!_viewModel.SelectedClientId.HasValue)
+                {
+                    MessageBox.Show("Выберите клиента!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                if (!_viewModel.SelectedEmployeeId.HasValue)
+                {
+                    MessageBox.Show("Выберите сотрудника!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                if (!_viewModel.SelectedBranchId.HasValue)
+                {
+                    MessageBox.Show("Выберите филиал!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                if (!_viewModel.SelectedDepositTypeId.HasValue)
+                {
+                    MessageBox.Show("Выберите тип депозита!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Обновляем основные поля
+                _contract.Amount = _viewModel.Amount;
+                _contract.StartDate = DateTime.SpecifyKind(_viewModel.StartDate, DateTimeKind.Utc);
+                _contract.EndDate = DateTime.SpecifyKind(_viewModel.EndDate, DateTimeKind.Utc);
+                _contract.Status = _viewModel.Status;
+                _contract.ClientId = _viewModel.SelectedClientId.Value;
+                _contract.EmployeeId = _viewModel.SelectedEmployeeId.Value;
+                _contract.BranchId = _viewModel.SelectedBranchId.Value;
+                _contract.TypeId = _viewModel.SelectedDepositTypeId.Value;
+
+                // Синхронизируем коллекции
+                SyncDocuments();
+                SyncOperations();
+
+                // Сохраняем
+                await _depositService.UpdateAsync(_contract);
+
+                MessageBox.Show("Изменения успешно сохранены!", "Успех",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+
+                DialogResult = true;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = $"Ошибка при сохранении:\n\n{ex.Message}";
+
+                if (ex.InnerException != null)
+                {
+                    errorMessage += $"\n\nВнутренняя ошибка:\n{ex.InnerException.Message}";
+                }
+
+                MessageBox.Show(errorMessage, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                SaveButton.IsEnabled = true;
+            }
         }
-        if (!_viewModel.SelectedEmployeeId.HasValue)
-        {
-            MessageBox.Show("Выберите сотрудника!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-        if (!_viewModel.SelectedBranchId.HasValue)
-        {
-            MessageBox.Show("Выберите филиал!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-        if (!_viewModel.SelectedDepositTypeId.HasValue)
-        {
-            MessageBox.Show("Выберите тип депозита!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-
-        // Обновляем основные поля
-        _contract.Amount = _viewModel.Amount;
-
-        // ИСПРАВЛЕНИЕ: Устанавливаем Kind для DateTime
-        _contract.StartDate = DateTime.SpecifyKind(_viewModel.StartDate, DateTimeKind.Utc);
-        _contract.EndDate = DateTime.SpecifyKind(_viewModel.EndDate, DateTimeKind.Utc);
-
-        _contract.Status = _viewModel.Status;
-        _contract.ClientId = _viewModel.SelectedClientId.Value;
-        _contract.EmployeeId = _viewModel.SelectedEmployeeId.Value;
-        _contract.BranchId = _viewModel.SelectedBranchId.Value;
-        _contract.TypeId = _viewModel.SelectedDepositTypeId.Value;
-
-        // Синхронизируем коллекции
-        SyncDocuments();
-        SyncOperations();
-
-        // Сохраняем
-        await _depositService.UpdateAsync(_contract);
-
-        MessageBox.Show("Изменения успешно сохранены!", "Успех",
-            MessageBoxButton.OK, MessageBoxImage.Information);
-
-        DialogResult = true;
-        Close();
-    }
-    catch (Exception ex)
-    {
-        var errorMessage = $"Ошибка при сохранении:\n\n{ex.Message}";
-
-        if (ex.InnerException != null)
-        {
-            errorMessage += $"\n\nВнутренняя ошибка:\n{ex.InnerException.Message}";
-        }
-
-        MessageBox.Show(errorMessage, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-    }
-    finally
-    {
-        SaveButton.IsEnabled = true;
-    }
-}
-
-
 
         private void SyncDocuments()
         {
@@ -223,7 +302,7 @@ namespace PIC_CURSACH.View.entityDetails
 
         private void AddDocument_Click(object sender, RoutedEventArgs e)
         {
-            if (_contract == null) return;
+            if (_contract == null || !_canEdit) return;
 
             _viewModel.Documents.Add(new Document
             {
@@ -236,6 +315,8 @@ namespace PIC_CURSACH.View.entityDetails
 
         private void RemoveDocument_Click(object sender, RoutedEventArgs e)
         {
+            if (!_canEdit) return;
+
             if (DocumentsDataGrid.SelectedItem is Document selectedDoc)
             {
                 if (MessageBox.Show("Удалить документ?", "Подтверждение",
@@ -248,7 +329,7 @@ namespace PIC_CURSACH.View.entityDetails
 
         private void AddOperation_Click(object sender, RoutedEventArgs e)
         {
-            if (_contract == null) return;
+            if (_contract == null || !_canEdit) return;
 
             _viewModel.DepositOperations.Add(new DepositOperation
             {
@@ -262,6 +343,8 @@ namespace PIC_CURSACH.View.entityDetails
 
         private void RemoveOperation_Click(object sender, RoutedEventArgs e)
         {
+            if (!_canEdit) return;
+
             if (OperationsDataGrid.SelectedItem is DepositOperation selectedOp)
             {
                 if (MessageBox.Show("Удалить операцию?", "Подтверждение",
@@ -274,6 +357,12 @@ namespace PIC_CURSACH.View.entityDetails
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
+            if (!_canEdit)
+            {
+                Close();
+                return;
+            }
+
             if (MessageBox.Show("Отменить изменения?", "Подтверждение",
                 MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {

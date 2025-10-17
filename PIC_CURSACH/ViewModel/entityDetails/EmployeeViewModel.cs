@@ -31,6 +31,20 @@ namespace PIC_CURSACH.ViewModel.entityDetail
 
         public ObservableCollection<DepositContract> DepositContracts { get; set; }
 
+        private bool _isEditable = true;
+        public bool IsEditable
+        {
+            get => _isEditable;
+            set { _isEditable = value; OnPropertyChanged(nameof(IsEditable)); }
+        }
+
+        private string _closeButtonText = "Отмена";
+        public string CloseButtonText
+        {
+            get => _closeButtonText;
+            set { _closeButtonText = value; OnPropertyChanged(nameof(CloseButtonText)); }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
         {

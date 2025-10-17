@@ -155,7 +155,7 @@ public partial class DepositTypesTableViewModel : ObservableObject
     {
         if (SelectedDepositType == null) return;
 
-        var detailsWindow = new DepositTypeDetailsWindow(SelectedDepositType);
+        var detailsWindow = new DepositTypeDetailsWindow(SelectedDepositType, true);
         detailsWindow.ShowDialog();
     }
 
